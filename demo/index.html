@@ -9,8 +9,7 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="css/skins.css">
-    <link rel="stylesheet" href="../css/grid-tiles.css">
+    <link rel="stylesheet" href="../css/scrolltop.css">
     <style type="text/css">
         .container {
             width: 980px;
@@ -216,11 +215,12 @@
     
 
     
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/scrolltop.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery.js"><\/script>')</script>
+    <script src="../src/jquery-scrolltop.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $().ScrollTop({skins: 'skin-2',easingType: 'easing-3'});
+        $(document).ready(function($) {
+            $('body').ScrollTop({skins: 'skin-2',easingType: 'easing-3'});
         });
     </script>
 </body>
