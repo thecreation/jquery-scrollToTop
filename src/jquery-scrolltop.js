@@ -44,14 +44,14 @@
 					self.$element.removeClass(self.easingType);
 				});
 
-				this.bind();
+				this.toggle();
 			},
 			prepare: function() {
 				if (!self.$element.find('#' + self.namespace).length) {
 					self.$element.append('<a href="#" id="' + self.namespace + '" class="' + self.skin + '">' + self.options.text + '</a>');
 				}
 			},
-			bind: function() {
+			toggle: function() {
 				self.$toggle = self.$element.find('#' + self.namespace);
 
 				self.$element.on('click.scrollTop', '#' + self.namespace, function() {
@@ -73,7 +73,7 @@
 		});
 		if (self.needScrollTop()) {
 			if (this.$element.find('#' + self.namespace).length) {
-				self.bind();
+				self.toggle();
 			} else {
 				self.init();
 			}
@@ -81,7 +81,7 @@
 		$(window).scroll(function() {
 			if (self.needScrollTop()) {
 				if (self.$element.find('#' + self.namespace).length) {
-					self.bind();
+					self.toggle();
 				} else {
 					self.init();
 				}
