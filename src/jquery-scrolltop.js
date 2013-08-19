@@ -16,6 +16,12 @@
 		this.options = $.extend(ScrollTop.defaults, options);
 
 		this.namespace = this.options.namespace;
+		this.easingType = 'easing_' + this.options.easingType;
+		if (this.options.skin != null) {
+			this.skin = this.namespace + '-img_' + this.options.skin;
+		} else {
+			this.skin = this.namespace + '_default';
+		}
 
 		var self = this;
 		$.extend(self, {
@@ -23,58 +29,59 @@
 				this.prepare();
 
 				// bind event
-				self.$element.on('ScrollTop:down', function() {
+				self.$element.on('ScrollTop:active', function() {
 					var pos = $(window).scrollTop();
 					self.$element.css({
 						'margin-top': -pos + 'px'
 					});
 					$(window).scrollTop(0);
-					self.$element.addClass(self.options.easingType).addClass(self.namespace + '_margin-top');
-					self.$element.trigger('ScrollTop:up');
+					self.$element.css({
+						'margin-top': '0'
+					}).addClass(self.easingType);
+					self.$element.trigger('ScrollTop:inactive');
 				});
-				self.$element.on('ScrollTop:up"webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd"', function() {
-					self.$element.removeClass(self.options.easingType).removeClass(self.namespace + '_margin-top');
+				self.$element.on('ScrollTop:inactive[webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd]', function() {
+					self.$element.removeClass(self.easingType);
 				});
 
-				this.toggle.bind();
+				this.bind();
 			},
 			prepare: function() {
-				if (!self.$element.has('#' + self.namespace).length) {
-					self.$element.append(this.toggle.html());
+				if (!self.$element.find('#' + self.namespace).length) {
+					self.$element.append('<a href="#" id="' + self.namespace + '" class="' + self.skin + '">' + self.options.text + '</a>');
 				}
 			},
-			toggle: {
-				html: function() {
-					return '<a href="#" id="' + self.namespace + '" class="' + self.options.skins + '">' + self.options.txt + '</a>';
-				},
-				bind: function() {
-					self.$toggle = self.$element.find('#' + self.namespace);
+			bind: function() {
+				self.$toggle = self.$element.find('#' + self.namespace);
 
-					self.$element.on('click.scrollTop', '#' + self.namespace, function() {
-						self.$element.trigger('ScrollTop:down');
-						return false;
-					});
-				}
+				self.$element.on('click.scrollTop', '#' + self.namespace, function() {
+					self.$element.trigger('ScrollTop:active');
+					return false;
+				});
 			},
 			needScrollTop: function() {
-				if (self.$element.hasClass(self.namespace + '_scrolling')) {
+				if ($(window).scrollTop() > self.options.minHeight) {
+					self.$element.addClass(self.namespace + '_scrolling');
+					$('#' + self.namespace).fadeIn(self.options.inDelay);
 					return true;
 				} else {
+					self.$element.removeClass(self.namespace + '_scrolling');
+					$('#' + self.namespace).fadeOut(self.options.outDelay);
 					return false;
 				}
 			}
 		});
-		$(window).scroll(function() {
-			if ($(window).scrollTop() > self.options.minHeight) {
-				self.$element.addClass(self.namespace + '_scrolling');
-				$('#' + self.namespace).fadeIn(self.options.inDelay);
+		if (self.needScrollTop()) {
+			if (this.$element.find('#' + self.namespace).length) {
+				self.bind();
 			} else {
-				self.$element.removeClass(self.namespace + '_scrolling');
-				$('#' + self.namespace).fadeOut(self.options.outDelay);
+				self.init();
 			}
+		}
+		$(window).scroll(function() {
 			if (self.needScrollTop()) {
-				if (self.$element.has('#' + self.namespace).length) {
-					self.toggle.bind();
+				if (self.$element.find('#' + self.namespace).length) {
+					self.bind();
 				} else {
 					self.init();
 				}
@@ -84,29 +91,29 @@
 
 	// Default options
 	ScrollTop.defaults = {
-		txt: 'Scroll To Top',
+		text: 'Scroll To Top',
 		minHeight: 200,
 		inDelay: 500,
 		outDelay: 400,
-		skins: null,
-		easingType: 'easing-1',
+		skin: null,
+		easingType: 'linear',
 		namespace: 'scrollTop'
 	};
 
 	ScrollTop.prototype = {
 		constructor: ScrollTop,
 
-		up: function() {
-			this.$element.trigger('ScrollTop:up');
+		disable: function() {
+			this.$element.trigger('ScrollTop:inactive');
 		},
-		down: function() {
-			this.$element.trigger('ScrollTop:down');
+		enable: function() {
+			this.$element.trigger('ScrollTop:active');
 		},
 		destroy: function() {
 			this.$element.data('ScrollTop', null);
-			this.$element.off('.ScrollTop');
-			this.$element.off('ScrollTop:up');
-			this.$element.off('ScrollTop:down');
+			this.$element.off('#ScrollTop');
+			this.$element.off('ScrollTop:inactive');
+			this.$element.off('ScrollTop:active');
 		}
 	};
 

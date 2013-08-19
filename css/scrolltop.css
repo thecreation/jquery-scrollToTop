@@ -1,4 +1,4 @@
-[class*="skin-"] {
+[class*="scrollTop-"] {
 	position: fixed;
 	right: 20px;
 	bottom: 20px;
@@ -12,6 +12,7 @@
 	text-indent: 100%;
 	white-space: nowrap;
 	overflow: hidden;
+	outline: none;
 	background: no-repeat center center transparent;
 
 }
@@ -19,53 +20,42 @@
 .scrollTop_scrolling {
 	overflow-y: scroll;
 }
-.scrollTop_margin-top {
-	margin-top: 0;
+
+.scrollTop-default {
+	display: inline-block;
+	width: auto;
+	height: auto;
+	padding: 10px;
+	text-indent: 0;
+	background: #eee;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+.scrollTop-default:hover {
+	background-color: #ddd;
+}
+.scrollTop-img_cycle {
+	background-image: url("../img/cycle.png");
+}
+.scrollTop-img_cycle:hover {
+	background-image: url("../img/cycle-hover.png");
 }
 
-.skin-1 {
-	background-image: url("../img/skin-1.png");
+.scrollTop-img_square {
+	background-image: url("../img/square.png");
 }
-.skin-1:hover {
-	background-image: url("../img/skin-1-hover.png");
+.scrollTop-img_square:hover {
+	background-image: url("../img/square-hover.png");
 }
-
-.skin-2 {
-	background-image: url("../img/skin-2.png");
+.scrollTop-img_text {
+	background-image: url("../img/text.png");
 }
-.skin-2:hover {
-	background-image: url("../img/skin-2-hover.png");
+.scrollTop-img_text:hover {
+	background-image: url("../img/text-hover.png");
 }
-.skin-3 {
-	background-image: url("../img/skin-3.png");
-}
-.skin-3:hover {
-	background-image: url("../img/skin-3-hover.png");
-}
-.skin-4 {
+.scrollTop-img_skin-4 {
 	background-image: url("../img/skin-4.png");
 }
-.skin-4:hover {
+.scrollTop-img_skin-4:hover {
 	background-image: url("../img/skin-4-hover.png");
-}
-
-.easing-1 {
-	-webkit-transition: all 1s cubic-bezier(0.000, 0.125, 0.060, 0.995);
-        	transition: all 1s cubic-bezier(0.000, 0.125, 0.060, 0.995); 
-}
-.easing-2 {
-	-webkit-transition: all 1s cubic-bezier(0.600, 0.040, 0.980, 0.335);
-        	transition: all 1s cubic-bezier(0.600, 0.040, 0.980, 0.335); 
-}
-.easing-3 {
-	-webkit-transition: all 1s cubic-bezier(1.000, -0.560, 0.000, 1.455);
-        	transition: all 1s cubic-bezier(1.000, -0.560, 0.000, 1.455); 
-}
-.easing-4 {
-	-webkit-transition: all 1s cubic-bezier(0.175, 0.885, 0.320, 1.275);
-        	transition: all 1s cubic-bezier(0.175, 0.885, 0.320, 1.275); 
-}
-.easing-5 {
-	-webkit-transition: all 1s cubic-bezier(0.225, 0.220, 0.915, 0.360);
-        	transition: all 1s cubic-bezier(0.225, 0.220, 0.915, 0.360); 
 }
