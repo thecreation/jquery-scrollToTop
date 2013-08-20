@@ -1,0 +1,19 @@
+.duration_100 {
+	-webkit-transition-duration: 100ms;
+			transition-duration: 100ms;
+}
+
+.duration_200 {
+	-webkit-transition-duration: 200ms;
+			transition-duration: 200ms;
+}
+
+.duration_300 {
+	-webkit-transition-duration: 300ms;
+			transition-duration: 300ms;
+}
+
+.duration_1000 {
+	-webkit-transition-duration: 1000ms;
+			transition-duration: 1000ms;
+}

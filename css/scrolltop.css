@@ -1,4 +1,4 @@
-[class*="scrollTop-"] {
+[class*="scrollToTop-"] {
 	position: fixed;
 	right: 20px;
 	bottom: 20px;
@@ -17,11 +17,15 @@
 
 }
 
-.scrollTop_scrolling {
+.scrollToTop_show {
 	overflow-y: scroll;
 }
+.scrollToTop_jumping {
+	-webkit-transition-duration: 1000ms;
+			transition-duration: 1000ms;
+}
 
-.scrollTop-default {
+.scrollToTop-default {
 	display: inline-block;
 	width: auto;
 	height: auto;
@@ -31,31 +35,31 @@
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 }
-.scrollTop-default:hover {
+.scrollToTop-default:hover {
 	background-color: #ddd;
 }
-.scrollTop-img_cycle {
+.scrollToTop-img_cycle {
 	background-image: url("../img/cycle.png");
 }
-.scrollTop-img_cycle:hover {
+.scrollToTop-img_cycle:hover {
 	background-image: url("../img/cycle-hover.png");
 }
 
-.scrollTop-img_square {
+.scrollToTop-img_square {
 	background-image: url("../img/square.png");
 }
-.scrollTop-img_square:hover {
+.scrollToTop-img_square:hover {
 	background-image: url("../img/square-hover.png");
 }
-.scrollTop-img_text {
+.scrollToTop-img_text {
 	background-image: url("../img/text.png");
 }
-.scrollTop-img_text:hover {
+.scrollToTop-img_text:hover {
 	background-image: url("../img/text-hover.png");
 }
-.scrollTop-img_skin-4 {
+.scrollToTop-img_skin-4 {
 	background-image: url("../img/skin-4.png");
 }
-.scrollTop-img_skin-4:hover {
+.scrollToTop-img_skin-4:hover {
 	background-image: url("../img/skin-4-hover.png");
 }
