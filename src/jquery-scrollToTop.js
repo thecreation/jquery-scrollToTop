@@ -19,7 +19,7 @@
 		if (this.options.skin != null) {
 			this.skin = this.namespace + '-img_' + this.options.skin;
 		} else {
-			this.skin = this.namespace + '_default';
+			this.skin = this.namespace + '-default';
 		}
 		this.disabled = false;
 
@@ -58,7 +58,6 @@
 						self.$doc.addClass(self.namespace + '_show');
 
 						self.$trigger.addClass(self.namespace + '_' + self.options.animation);
-						self.insertRule(sheet, '.' + self.namespace + '_' + self.options.animation, '-webkit-transition-duration: ' + self.options.animationSpeed + 'ms; transition-duration: ' + self.options.animationSpeed + 'ms;', 0);
 					})
 					.on('ScrollToTop::hide', function() {
 						self.$doc.removeClass(self.namespace + '_show');
@@ -79,6 +78,7 @@
 			},
 			build: function() {
 				self.$trigger = $('<a href="#" id="' + self.namespace + '" class="' + self.skin + '">' + self.options.text + '</a>').appendTo($('body'));
+				self.insertRule(sheet, '.' + self.namespace + '_' + self.options.animation, '-webkit-transition-duration: ' + self.options.animationSpeed + 'ms; transition-duration: ' + self.options.animationSpeed + 'ms;', 0);
 			},
 			can: function() {
 				if ($(window).scrollTop() > self.options.distance) {
