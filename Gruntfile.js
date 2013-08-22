@@ -44,6 +44,32 @@ module.exports = function(grunt) {
 				src: ['src/**/*.js']
 			},
 		},
+		// -- copy config ----------------------------------------------------------
+		copy: {
+			easing: {
+				files: [{
+					expand: true,
+					flatten: true,
+					cwd: 'bower_components/easing',
+					src: [
+						'css/easing.css'
+					],
+					dest: 'css/'
+				}]
+			},
+			jquery: {
+				files: [{
+					expand: true,
+					flatten: true,
+					cwd: 'bower_components/jquery',
+					src: [
+						'jquery.js',
+						'jquery.min.js'
+					],
+					dest: 'demo/js'
+				}]
+			}
+		},
 		replace: {
 			bower: {
 				src: ['bower.json'],
@@ -54,7 +80,7 @@ module.exports = function(grunt) {
 				}]
 			},
 			jquery: {
-				src: ['scrollTop.jquery.json'],
+				src: ['scrollToTop.jquery.json'],
 				overwrite: true, // overwrite matched source files
 				replacements: [{
 					from: /("version": ")([0-9\.]+)(")/g,
@@ -94,12 +120,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-jsbeautifier');
 	grunt.loadNpmTasks('grunt-text-replace');
 
 	// Default task.
+	grunt.registerTask('update', ['copy']);
 	grunt.registerTask('default', ['jshint', 'jsbeautifier', 'clean', 'concat', 'uglify']);
 
 	grunt.registerTask('version', [

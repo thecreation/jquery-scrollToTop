@@ -1,7 +1,8 @@
 [class*="scrollToTop-"] {
 	position: fixed;
 	right: 20px;
-	bottom: 20px;
+	bottom: -100px;
+	opacity: 0;
 	width: 50px;
 	height: 50px;
 	color: #000;
@@ -20,9 +21,23 @@
 .scrollToTop_show {
 	overflow-y: scroll;
 }
-.scrollToTop_jumping {
-	-webkit-transition-duration: 1000ms;
-			transition-duration: 1000ms;
+.scrollToTop_none {
+	opacity: 1;
+	bottom: 20px;
+	-webkit-transition-property: none;
+			transition-property: none;
+}
+.scrollToTop_fade {
+	opacity: 1;
+	bottom: 20px;
+	-webkit-transition-property: opacity;
+			transition-property: opacity;
+}
+.scrollToTop_slide {
+	opacity: 1;
+	bottom: 20px;
+	-webkit-transition-property: bottom;
+			transition-property: bottom;
 }
 
 .scrollToTop-default {
@@ -57,9 +72,9 @@
 .scrollToTop-img_text:hover {
 	background-image: url("../img/text-hover.png");
 }
-.scrollToTop-img_skin-4 {
-	background-image: url("../img/skin-4.png");
+.scrollToTop-img_triangle {
+	background-image: url("../img/triangle.png");
 }
-.scrollToTop-img_skin-4:hover {
-	background-image: url("../img/skin-4-hover.png");
+.scrollToTop-img_triangle:hover {
+	background-image: url("../img/triangle-hover.png");
 }

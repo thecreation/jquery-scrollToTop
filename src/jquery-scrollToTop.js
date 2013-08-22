@@ -11,9 +11,6 @@
 
 	// Constructor
 	var ScrollToTop = function(element, options) {
-		this.element = element;
-		this.$doc = $(element);
-
 		this.$doc = $('body');
 		this.options = $.extend(ScrollToTop.defaults, options);
 
@@ -25,12 +22,13 @@
 			this.skin = this.namespace + '_default';
 		}
 		this.disabled = false;
-		
 
+
+		var sheet = document.styleSheets[document.styleSheets.length - 1];
 		var self = this;
 		$.extend(self, {
 			init: function() {
-				this.build();
+				self.build();
 
 				self.$doc.on('click.scrollTop', '#' + self.namespace, function() {
 					self.$doc.trigger('ScrollToTop::jump');
@@ -39,7 +37,7 @@
 
 				// bind events
 				self.$doc.on('ScrollToTop::jump', function() {
-					if(self.disabled){
+					if (self.disabled) {
 						return;
 					}
 					var pos = $(window).scrollTop();
@@ -48,38 +46,36 @@
 					});
 
 					$(window).scrollTop(0);
-
-					self.$doc.addClass(self.easing + ' ' + self.namespace + '_jumping').css({
+					self.insertRule(sheet, '.' + self.easing, '-webkit-transition-duration: ' + self.options.speed + 'ms; transition-duration: ' + self.options.speed + 'ms;', 0);
+					self.$doc.addClass(self.easing).css({
 						'margin-top': ''
 					});
-				});
+				})
+					.on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
+						self.$doc.removeClass(self.easing);
+					})
+					.on('ScrollToTop::show', function() {
+						self.$doc.addClass(self.namespace + '_show');
 
-				self.$doc.on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
-					self.$doc.removeClass(self.easing + ' ' + self.namespace + '_jumping');
-				});
+						self.$trigger.addClass(self.namespace + '_' + self.options.animation);
+						self.insertRule(sheet, '.' + self.namespace + '_' + self.options.animation, '-webkit-transition-duration: ' + self.options.animationSpeed + 'ms; transition-duration: ' + self.options.animationSpeed + 'ms;', 0);
+					})
+					.on('ScrollToTop::hide', function() {
+						self.$doc.removeClass(self.namespace + '_show');
 
-				self.$doc.on('ScrollToTop::show', function() {
-					self.$doc.addClass(self.namespace + '_show');
+						self.$trigger.removeClass(self.namespace + '_' + self.options.animation);
+					})
+					.on('ScrollToTop::disable', function() {
+						self.disabled = true;
+						self.$doc.trigger('ScrollToTop::hide');
+					})
+					.on('ScrollToTop::enable', function() {
+						self.disabled = false;
 
-					self.$trigger.fadeIn(self.options.animationSpeed);
-				});
+						self.toggle();
+					});
 
-				self.$doc.on('ScrollToTop::hide', function() {
-					self.$doc.removeClass(self.namespace + '_show');
-
-					self.$trigger.fadeOut(self.options.animationSpeed);
-				});
-
-				self.$doc.on('ScrollToTop::disable', function() {
-					self.disabled = true;
-					self.$doc.trigger('ScrollToTop::hide');
-				});
-				
-				self.$doc.on('ScrollToTop::enable', function() {
-					self.disabled = false;
-
-					self.toggle();
-				});
+				self.toggle();
 			},
 			build: function() {
 				self.$trigger = $('<a href="#" id="' + self.namespace + '" class="' + self.skin + '">' + self.options.text + '</a>').appendTo($('body'));
@@ -91,17 +87,24 @@
 					return false;
 				}
 			},
-			toggle: function(){
+			toggle: function() {
 				if (self.can()) {
 					self.$doc.trigger('ScrollToTop::show');
 				} else {
 					self.$doc.trigger('ScrollToTop::hide');
 				}
+			},
+			insertRule: function(sheet, selectorText, cssText, position) {
+				if (sheet.insertRule) {
+					sheet.insertRule(selectorText + "{" + cssText + "}", position);
+				} else if (sheet.addRule) {
+					sheet.addRule(selectorText, cssText, position);
+				}
 			}
 		});
 
 		$(window).scroll(function() {
-			if(self.disabled){
+			if (self.disabled) {
 				return;
 			}
 			self.toggle();
@@ -112,19 +115,19 @@
 
 	// Default options
 	ScrollToTop.defaults = {
-		speed: 300,
+		speed: 1000,
 		easing: 'linear',
 		distance: 200,
 		text: 'Scroll To Top',
 		animation: 'fade', // fade, slide, none
-		animationSpeed: 300,
+		animationSpeed: 500,
 		skin: null,
 		namespace: 'scrollToTop'
 	};
 
 	ScrollToTop.prototype = {
 		constructor: ScrollToTop,
-		jump: function(){
+		jump: function() {
 			this.$doc.trigger('ScrollToTop::jump');
 		},
 		disable: function() {
