@@ -11,11 +11,7 @@
 
 		this.namespace = this.options.namespace;
 		this.easing = 'easing_' + this.options.easing;
-		if (this.options.skin != null) {
-			this.skin = this.namespace + '-img_' + this.options.skin;
-		} else {
-			this.skin = this.namespace + '-default';
-		}
+		this.skin = this.namespace + '_' + this.options.skin;
 		this.disabled = false;
 
 
@@ -25,7 +21,7 @@
 			init: function() {
 				self.build();
 
-				self.$doc.on('click.scrollTop', '#' + self.namespace, function() {
+				self.$doc.on('click.scrollToTop', '#' + self.namespace, function() {
 					self.$doc.trigger('ScrollToTop::jump');
 					return false;
 				});
@@ -72,7 +68,7 @@
 				self.toggle();
 			},
 			build: function() {
-				self.$trigger = $('<a href="#" id="' + self.namespace + '" class="' + self.skin + '">' + self.options.text + '</a>').appendTo($('body'));
+				self.$trigger = $('<a href="#" id="' + self.namespace + '" class="' + self.namespace + ' ' + self.skin + '">' + self.options.text + '</a>').appendTo($('body'));
 				self.insertRule(sheet, '.' + self.namespace + '_' + self.options.animation, '-webkit-transition-duration: ' + self.options.animationSpeed + 'ms; transition-duration: ' + self.options.animationSpeed + 'ms;', 0);
 			},
 			can: function() {

@@ -1,4 +1,4 @@
-[class*="scrollToTop-"] {
+.scrollToTop {
 	position: fixed;
 	right: 20px;
 	bottom: -100px;
@@ -40,7 +40,7 @@
 			transition-property: bottom;
 }
 
-.scrollToTop-default {
+.scrollToTop_default {
 	display: inline-block;
 	width: auto;
 	height: auto;
@@ -50,31 +50,31 @@
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 }
-.scrollToTop-default:hover {
+.scrollToTop_default:hover {
 	background-color: #ddd;
 }
-.scrollToTop-img_cycle {
+.scrollToTop_cycle {
 	background-image: url("../img/cycle.png");
 }
-.scrollToTop-img_cycle:hover {
+.scrollToTop_cycle:hover {
 	background-image: url("../img/cycle-hover.png");
 }
 
-.scrollToTop-img_square {
+.scrollToTop_square {
 	background-image: url("../img/square.png");
 }
-.scrollToTop-img_square:hover {
+.scrollToTop_square:hover {
 	background-image: url("../img/square-hover.png");
 }
-.scrollToTop-img_text {
+.scrollToTop_text {
 	background-image: url("../img/text.png");
 }
-.scrollToTop-img_text:hover {
+.scrollToTop_text:hover {
 	background-image: url("../img/text-hover.png");
 }
-.scrollToTop-img_triangle {
+.scrollToTop_triangle {
 	background-image: url("../img/triangle.png");
 }
-.scrollToTop-img_triangle:hover {
+.scrollToTop_triangle:hover {
 	background-image: url("../img/triangle-hover.png");
 }
