@@ -21,27 +21,28 @@
 .scrollToTop_show {
 	overflow-y: scroll;
 }
-.scrollToTop_none {
+
+.scrollToTop_none,
+.scrollToTop_slide,
+.scrollToTop_fade {
 	opacity: 1;
 	bottom: 20px;
+}
+.scrollToTop_none {
 	-webkit-transition-property: none;
 			transition-property: none;
 }
 .scrollToTop_fade {
-	opacity: 1;
-	bottom: 20px;
 	-webkit-transition-property: opacity;
 			transition-property: opacity;
 }
 .scrollToTop_slide {
-	opacity: 1;
-	bottom: 20px;
 	-webkit-transition-property: bottom;
 			transition-property: bottom;
 }
 
-.scrollToTop_default {
-	display: inline-block;
+.scrollToTop_null {
+	display: block;
 	width: auto;
 	height: auto;
 	padding: 10px;
