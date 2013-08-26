@@ -68,7 +68,7 @@
 			},
 			build: function() {
 				self.$trigger = $('<a href="#" id="' + self.namespace + '" class="' + self.namespace + ' ' + self.skin + '">' + self.options.text + '</a>').appendTo($('body'));
-				self.insertRule(self.sheet, '.' + self.namespace + '_' + self.options.animation, '-webkit-transition-duration: ' + self.options.animationSpeed + 'ms; transition-duration: ' + self.options.animationSpeed + 'ms;', 0);
+				self.insertRule(self.sheet, '.' + self.namespace + '_' + self.options.animation, '-webkit-animation-duration: ' + self.options.animationSpeed + 'ms; animation-duration: ' + self.options.animationSpeed + 'ms;', 0);
 			},
 			can: function() {
 				if ($(window).scrollTop() > self.options.distance) {
