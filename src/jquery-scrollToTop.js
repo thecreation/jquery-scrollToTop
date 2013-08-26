@@ -18,9 +18,8 @@
 		this.easing = 'easing_' + this.options.easing;
 		this.skin = this.namespace + '_' + this.options.skin;
 		this.disabled = false;
+		this.sheet = document.styleSheets[document.styleSheets.length - 1];
 
-
-		var sheet = document.styleSheets[document.styleSheets.length - 1];
 		var self = this;
 		$.extend(self, {
 			init: function() {
@@ -42,39 +41,39 @@
 					});
 
 					$(window).scrollTop(0);
-					self.insertRule(sheet, '.' + self.easing, '-webkit-transition-duration: ' + self.options.speed + 'ms; transition-duration: ' + self.options.speed + 'ms;', 0);
+					self.insertRule(self.sheet, '.' + self.easing, '-webkit-transition-duration: ' + self.options.speed + 'ms; transition-duration: ' + self.options.speed + 'ms;', 0);
 					self.$doc.addClass(self.easing).css({
 						'margin-top': ''
 					});
 				})
-					.on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
-						self.$doc.removeClass(self.easing);
-					})
-					.on('ScrollToTop::show', function() {
-						self.$doc.addClass(self.namespace + '_show');
+				.on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
+					self.$doc.removeClass(self.easing);
+				})
+				.on('ScrollToTop::show', function() {
+					self.$doc.addClass(self.namespace + '_show');
 
-						self.$trigger.addClass(self.namespace + '_' + self.options.animation);
-					})
-					.on('ScrollToTop::hide', function() {
-						self.$doc.removeClass(self.namespace + '_show');
+					self.$trigger.addClass(self.namespace + '_' + self.options.animation);
+				})
+				.on('ScrollToTop::hide', function() {
+					self.$doc.removeClass(self.namespace + '_show');
 
-						self.$trigger.removeClass(self.namespace + '_' + self.options.animation);
-					})
-					.on('ScrollToTop::disable', function() {
-						self.disabled = true;
-						self.$doc.trigger('ScrollToTop::hide');
-					})
-					.on('ScrollToTop::enable', function() {
-						self.disabled = false;
+					self.$trigger.removeClass(self.namespace + '_' + self.options.animation);
+				})
+				.on('ScrollToTop::disable', function() {
+					self.disabled = true;
+					self.$doc.trigger('ScrollToTop::hide');
+				})
+				.on('ScrollToTop::enable', function() {
+					self.disabled = false;
 
-						self.toggle();
-					});
+					self.toggle();
+				});
 
 				self.toggle();
 			},
 			build: function() {
 				self.$trigger = $('<a href="#" id="' + self.namespace + '" class="' + self.namespace + ' ' + self.skin + '">' + self.options.text + '</a>').appendTo($('body'));
-				self.insertRule(sheet, '.' + self.namespace + '_' + self.options.animation, '-webkit-transition-duration: ' + self.options.animationSpeed + 'ms; transition-duration: ' + self.options.animationSpeed + 'ms;', 0);
+				self.insertRule(self.sheet, '.' + self.namespace + '_' + self.options.animation, '-webkit-transition-duration: ' + self.options.animationSpeed + 'ms; transition-duration: ' + self.options.animationSpeed + 'ms;', 0);
 			},
 			can: function() {
 				if ($(window).scrollTop() > self.options.distance) {
