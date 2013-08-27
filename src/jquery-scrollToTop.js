@@ -35,6 +35,12 @@
 					if (self.disabled) {
 						return;
 					}
+					if (!$('.' + self.namespace + '_' + self.options.animation).css('animation-duration')) {
+						$('body, html').animate({
+							scrollTop: 0
+						}, self.options.speed);
+						return;
+					}
 					var pos = $(window).scrollTop();
 					self.$doc.css({
 						'margin-top': -pos + 'px'

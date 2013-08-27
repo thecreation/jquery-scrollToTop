@@ -1,4 +1,4 @@
-/*! jQuery scrollToTop - v0.2.0 - 2013-08-26
+/*! jQuery scrollToTop - v0.2.0 - 2013-08-27
 * https://github.com/amazingSurge/jquery-scrollToTop
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -28,6 +28,12 @@
 				// bind events
 				self.$doc.on('ScrollToTop::jump', function() {
 					if (self.disabled) {
+						return;
+					}
+					if (!$('.' + self.namespace + '_' + self.options.animation).css('animation-duration')) {
+						$('body, html').animate({
+							scrollTop: 0
+						}, self.options.speed);
 						return;
 					}
 					var pos = $(window).scrollTop();
