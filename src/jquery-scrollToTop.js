@@ -25,6 +25,7 @@
 		var self = this;
 		$.extend(self, {
 			init: function() {
+				self.transition = self.transition();
 				self.build();
 
 				self.$doc.on('click.scrollToTop', '#' + self.namespace, function() {
@@ -54,7 +55,7 @@
 						return;
 					}
 				})
-					.on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
+					.on(self.transition.end, function() {
 						self.$doc.removeClass(self.easing);
 					})
 					.on('ScrollToTop::show', function() {

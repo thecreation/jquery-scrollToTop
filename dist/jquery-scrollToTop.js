@@ -1,4 +1,4 @@
-/*! jQuery scrollToTop - v0.3.0 - 2013-11-26
+/*! jQuery scrollToTop - v0.3.0 - 2013-11-27
 * https://github.com/amazingSurge/jquery-scrollToTop
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -20,6 +20,7 @@
 		var self = this;
 		$.extend(self, {
 			init: function() {
+				self.transition = self.transition();
 				self.build();
 
 				self.$doc.on('click.scrollToTop', '#' + self.namespace, function() {
@@ -49,7 +50,7 @@
 						return;
 					}
 				})
-					.on('webkitTransitionEnd transitionend msTransitionEnd oTransitionEnd', function() {
+					.on(self.transition.end, function() {
 						self.$doc.removeClass(self.easing);
 					})
 					.on('ScrollToTop::show', function() {
