@@ -1,4 +1,4 @@
-/*! jQuery scrollToTop - v0.3.0 - 2013-11-27
+/*! jQuery scrollToTop - v0.3.0 - 2013-12-13
 * https://github.com/amazingSurge/jquery-scrollToTop
 * Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -17,6 +17,8 @@
 		this.skin = this.namespace + '_' + this.options.skin;
 		this.disabled = false;
 
+		var x = $(window).width();
+
 		var self = this;
 		$.extend(self, {
 			init: function() {
@@ -33,15 +35,18 @@
 					if (self.disabled) {
 						return;
 					}
+					self.disableHover();
 					if (self.transition.supported) {
 						var pos = $(window).scrollTop();
 						self.$doc.css({
 							'margin-top': -pos + 'px'
 						});
 						$(window).scrollTop(0);
-						self.insertRule('.' + self.easing + '{' + self.transition.prefix + 'transition-duration: ' + self.options.speed + 'ms;}');
-						self.$doc.addClass(self.easing).css({
+						self.insertRule('.duration_' + self.options.speed + '{' + self.transition.prefix + 'transition-duration: ' + self.options.speed + 'ms;}');
+						self.$doc.addClass(self.easing + ' duration_' + self.options.speed).css({
 							'margin-top': ''
+						}).one(self.transition.end, function() {
+							self.$doc.removeClass(self.easing + ' duration_' + self.options.speed);
 						});
 					} else {
 						$('body, html').stop(true, false).animate({
@@ -50,9 +55,6 @@
 						return;
 					}
 				})
-					.on(self.transition.end, function() {
-						self.$doc.removeClass(self.easing);
-					})
 					.on('ScrollToTop::show', function() {
 						self.$doc.addClass(self.namespace + '_show');
 
@@ -76,6 +78,15 @@
 				self.toggle();
 			},
 			build: function() {
+				if (x < 768) {
+					var mobile = self.options.mobile;
+					self.options.speed = mobile.speed;
+					self.options.easing = mobile.easing;
+					self.options.distance = mobile.distance;
+					self.options.animation = mobile.animation;
+					self.options.animationSpeed = mobile.animationSpeed;
+					self.easing = 'easing_' + self.options.easing;
+				}
 				self.$trigger = $('<a href="#" id="' + self.namespace + '" class="' + self.namespace + ' ' + self.skin + '">' + self.options.text + '</a>').appendTo($('body'));
 				self.insertRule('.' + self.namespace + '_' + self.options.animation + '{' + self.transition.prefix + 'animation-duration: ' + self.options.animationSpeed + 'ms;}');
 			},
@@ -92,6 +103,16 @@
 				} else {
 					self.$doc.trigger('ScrollToTop::hide');
 				}
+			},
+			disableHover: function() {
+				var timer;
+				clearTimeout(timer);
+				if (!self.$doc.hasClass('disable-hover')) {
+					self.$doc.addClass('disable-hover');
+				}
+				timer = setTimeout(function() {
+					self.$doc.removeClass('disable-hover');
+				}, self.options.speed);
 			},
 			transition: function() {
 				var e,
@@ -159,7 +180,14 @@
 		animation: 'fade', // fade, slide, none
 		animationSpeed: 500,
 		skin: null,
-		namespace: 'scrollToTop'
+		namespace: 'scrollToTop',
+		mobile: {
+			speed: 500,
+			easing: 'linear',
+			distance: 100,
+			animation: 'fade',
+			animationSpeed: 100
+		}
 	};
 
 	ScrollToTop.prototype = {

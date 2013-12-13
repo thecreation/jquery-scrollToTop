@@ -92,3 +92,8 @@
 .scrollToTop_triangle:hover {
 	background-image: url("../img/triangle-hover.png");
 }
+
+.disable-hover,
+.disable-hover * {
+	pointer-events: none !important;
+}
