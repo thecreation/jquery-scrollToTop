@@ -5,7 +5,6 @@
   -webkit-transition-timing-function: cubic-bezier(0.25, 0.25, 0.75, 0.75);
           transition-timing-function: cubic-bezier(0.25, 0.25, 0.75, 0.75);
 }
-
 .easing_ease {
   -webkit-transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
           transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);

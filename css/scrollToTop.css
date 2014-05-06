@@ -1,8 +1,48 @@
+html {
+	overflow-y: scroll;
+}
+/* core */
 .scrollToTop {
 	position: fixed;
 	right: 20px;
 	bottom: -100px;
 	opacity: 0;
+	
+	overflow: hidden;
+	outline: none;
+}
+
+.scrollToTop_show {
+	opacity: 1;
+	bottom: 20px;
+}
+
+@-webkit-keyframes scrollToTop_fade {
+	0%	 {opacity: 0;}
+	100% {opacity: 1;}
+}
+@keyframes scrollToTop_fade {
+	0%   {opacity: 0;}
+	100% {opacity: 1;}
+}
+
+@-webkit-keyframes scrollToTop_slide {
+	0%   {bottom: -100px;}
+	100% {bottom: 20px;}
+}
+@keyframes scrollToTop_slide {
+	0%   {bottom: -100px;}
+	100% {bottom: 20px;}
+}
+
+
+.scrollToTop_animating,
+.scrollToTop_animating * {
+	pointer-events: none !important;
+}
+
+/* skin(default) */
+.scrollToTop {
 	width: 50px;
 	height: 50px;
 	color: #000;
@@ -12,49 +52,10 @@
 	text-transform: uppercase;
 	text-indent: 100%;
 	white-space: nowrap;
-	overflow: hidden;
-	outline: none;
 	background: no-repeat center center transparent;
-
 }
 
-.scrollToTop_show {
-	overflow-y: scroll;
-}
-
-.scrollToTop_none,
-.scrollToTop_slide,
-.scrollToTop_fade {
-	opacity: 1;
-	bottom: 20px;
-}
-.scrollToTop_fade {
-	-webkit-animation-name: opacity;
-			animation-name: opacity;
-}
-@-webkit-keyframes opacity {
-	0%	 {opacity: 0;}
-	100% {opacity: 1;}
-}
-@keyframes opacity {
-	0%   {opacity: 0;}
-	100% {opacity: 1;}
-}
-
-.scrollToTop_slide {
-	-webkit-animation-name: bottom;
-			animation-name: bottom;
-}
-@-webkit-keyframes bottom {
-	0%   {bottom: -100px;}
-	100% {bottom: 20px;}
-}
-@keyframes bottom {
-	0%   {bottom: -100px;}
-	100% {bottom: 20px;}
-}
-
-.scrollToTop_null {
+.scrollToTop_default {
 	display: block;
 	width: auto;
 	height: auto;
@@ -67,6 +68,8 @@
 .scrollToTop_default:hover {
 	background-color: #ddd;
 }
+
+/* skin(cycle) */
 .scrollToTop_cycle {
 	background-image: url("../img/cycle.png");
 }
@@ -74,26 +77,26 @@
 	background-image: url("../img/cycle-hover.png");
 }
 
+/* skin(square) */
 .scrollToTop_square {
 	background-image: url("../img/square.png");
 }
 .scrollToTop_square:hover {
 	background-image: url("../img/square-hover.png");
 }
+
+/* skin(text) */
 .scrollToTop_text {
 	background-image: url("../img/text.png");
 }
 .scrollToTop_text:hover {
 	background-image: url("../img/text-hover.png");
 }
+
+/* skin(triangle) */
 .scrollToTop_triangle {
 	background-image: url("../img/triangle.png");
 }
 .scrollToTop_triangle:hover {
 	background-image: url("../img/triangle-hover.png");
-}
-
-.disable-hover,
-.disable-hover * {
-	pointer-events: none !important;
 }
