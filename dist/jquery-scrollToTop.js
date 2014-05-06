@@ -286,6 +286,7 @@
         text: 'Scroll To Top', // Text for element, can contain HTML
 
         skin: null,
+        throttle: 250,
 
         namespace: 'scrollToTop'
     };
