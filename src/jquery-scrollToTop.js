@@ -12,7 +12,7 @@
     // Constructor
     var ScrollToTop = function(options) {
         this.$doc = $('body');
-        this.options = $.extend(ScrollToTop.defaults, options);
+        this.options = $.extend(true, {}, ScrollToTop.defaults, options);
 
         var namespace = this.options.namespace;
 

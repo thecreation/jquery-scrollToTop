@@ -1,4 +1,4 @@
-/*! jQuery scrollToTop - v0.3.1 - 2014-09-04
+/*! jQuery scrollToTop - v0.3.1 - 2014-09-05
 * https://github.com/amazingSurge/jquery-scrollToTop
 * Copyright (c) 2014 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -7,7 +7,7 @@
     // Constructor
     var ScrollToTop = function(options) {
         this.$doc = $('body');
-        this.options = $.extend(ScrollToTop.defaults, options);
+        this.options = $.extend(true, {}, ScrollToTop.defaults, options);
 
         var namespace = this.options.namespace;
 

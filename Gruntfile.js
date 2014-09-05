@@ -8,9 +8,11 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %>\n' + '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' + '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' + ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         // Task configuration.
+        // -- clean config ----------------------------------------------------------
         clean: {
             files: ['dist']
         },
+        // -- concat config ----------------------------------------------------------
         concat: {
             options: {
                 banner: '<%= banner %>',
@@ -21,6 +23,7 @@ module.exports = function(grunt) {
                 dest: 'dist/<%= pkg.name %>.js'
             },
         },
+        // -- uglify config ----------------------------------------------------------
         uglify: {
             options: {
                 banner: '<%= banner %>'
@@ -30,6 +33,7 @@ module.exports = function(grunt) {
                 dest: 'dist/<%= pkg.name %>.min.js'
             },
         },
+        // -- jshint config ----------------------------------------------------------
         jshint: {
             gruntfile: {
                 options: {
@@ -92,7 +96,7 @@ module.exports = function(grunt) {
                 dest: 'css/'
             }
         },
-
+        // -- replace config ----------------------------------------------------------
         replace: {
             bower: {
                 src: ['bower.json'],
@@ -111,6 +115,7 @@ module.exports = function(grunt) {
                 }]
             },
         },
+        // -- jsbeautifier config ----------------------------------------------------------
         jsbeautifier: {
             files: ["src/**/*.js", 'Gruntfile.js'],
             options: {
@@ -131,6 +136,7 @@ module.exports = function(grunt) {
                 unescape_strings: false
             }
         },
+        // -- watch config ----------------------------------------------------------
         watch: {
             gruntfile: {
                 files: '<%= jshint.gruntfile.src %>',
