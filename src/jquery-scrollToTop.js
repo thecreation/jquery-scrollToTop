@@ -37,7 +37,6 @@
                 self.transition = self.transition();
                 self.build();
 
-
                 if (self.options.target) {
                     if (typeof self.options.target === 'number') {
                         self.target = self.options.target;
@@ -72,7 +71,6 @@
                     }
 
                     self.$doc.addClass(self.classes.animating);
-
 
                     if (self.transition.supported) {
                         var pos = $(window).scrollTop();
@@ -122,7 +120,7 @@
                         self.toggle();
                     });
 
-                $(window).on('scroll', self._throttle(function() {
+                $(window).on('scroll.ScrollToTop', self._throttle(function() {
                     if (self.disabled) {
                         return;
                     }
@@ -131,7 +129,7 @@
                 }, self.options.throttle));
 
                 if (self.options.mobile) {
-                    $(window).on('resize', self._throttle(function() {
+                    $(window).on('resize.ScrollToTop orientationchange.ScrollToTop', self._throttle(function() {
                         if (self.disabled) {
                             return;
                         }
@@ -184,7 +182,6 @@
                     self.$doc.trigger('ScrollToTop::hide');
                 }
             },
-
             transition: function() {
                 var e,
                     end,
@@ -315,13 +312,14 @@
                 .off('ScrollToTop::jump')
                 .off('ScrollToTop::show')
                 .off('ScrollToTop::hide');
+            $(window).off('.ScrollToTop');
         }
     };
 
     $.fn.scrollToTop = function(options) {
         if (typeof options === 'string') {
             var method = options;
-            var method_arguments = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : undefined;
+            var method_arguments = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : [];
 
             return this.each(function() {
                 var api = $.data(this, 'scrollToTop');

@@ -70,6 +70,29 @@ module.exports = function(grunt) {
                 }]
             }
         },
+
+        // -- less config ----------------------------------------------------------
+        less: {
+            dist: {
+                files: {
+                    'css/scrollToTop.css': ['less/scrollToTop.less']
+                }
+            }
+        },
+
+        // -- autoprefixer config ----------------------------------------------------------
+        autoprefixer: {
+            options: {
+                browsers: ['last 2 versions', 'ie 8', 'ie 9', 'android 2.3', 'android 4', 'opera 12']
+            },
+            src: {
+                expand: true,
+                cwd: 'css/',
+                src: ['scrollToTop.css'],
+                dest: 'css/'
+            }
+        },
+
         replace: {
             bower: {
                 src: ['bower.json'],
@@ -116,19 +139,19 @@ module.exports = function(grunt) {
         },
     });
 
-    // These plugins provide necessary tasks.
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-jsbeautifier');
-    grunt.loadNpmTasks('grunt-text-replace');
+    // Load npm plugins to provide necessary tasks.
+    require('load-grunt-tasks')(grunt, {
+        pattern: ['grunt-*']
+    });
 
     // Default task.
-    grunt.registerTask('update', ['copy']);
-    grunt.registerTask('default', ['jshint', 'jsbeautifier', 'clean', 'concat', 'uglify']);
+
+    // Default task.
+    grunt.registerTask('default', ['js', 'dist']);
+
+    grunt.registerTask('dist', ['clean', 'concat', 'uglify']);
+    grunt.registerTask('js', ['jsbeautifier', 'jshint']);
+    grunt.registerTask('css', ['less', 'autoprefixer']);
 
     grunt.registerTask('version', [
         'replace:bower',
