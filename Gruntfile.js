@@ -151,8 +151,6 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-
-    // Default task.
     grunt.registerTask('default', ['js', 'dist']);
 
     grunt.registerTask('dist', ['clean', 'concat', 'uglify']);
