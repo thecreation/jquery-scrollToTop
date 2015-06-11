@@ -1,8 +1,8 @@
 /*
  * scrollToTop
- * https://github.com/amazingsurge/jquery-scrollToTop
+ * https://github.com/amazingSurge/jquery-scrollToTop
  *
- * Copyright (c) 2014 amazingsurge
+ * Copyright (c) 2014 amazingSurge
  * Licensed under the GPL license.
  */
 

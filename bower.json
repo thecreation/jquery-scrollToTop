@@ -10,7 +10,7 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": ">=1.8.3",
+    "jquery": ">=1.11.0",
     "easing": "git@github.com:amazingSurge/easing.css.git"
   }
 }
