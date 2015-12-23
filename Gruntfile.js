@@ -33,6 +33,21 @@ module.exports = function(grunt) {
                 dest: 'dist/<%= pkg.name %>.min.js'
             },
         },
+        babel: {
+            options: {
+                sourceMap: false,
+                presets: ["es2015"],
+                plugins: ["transform-es2015-modules-umd"]
+            },
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/',
+                    src: ['**/*.js'],
+                    dest: 'dist/'
+                }]
+            }
+        },
         // -- jshint config ----------------------------------------------------------
         jshint: {
             gruntfile: {

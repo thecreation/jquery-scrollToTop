@@ -1,341 +1,343 @@
-/*
- * scrollToTop
- * https://github.com/amazingSurge/jquery-scrollToTop
- *
- * Copyright (c) 2014 amazingSurge
- * Licensed under the GPL license.
- */
+import $ from 'jQuery';
 
-(function(window, document, $, undefined) {
-    'use strict';
+const NAME = "scrollToTop";
+const DEFAULT = {
+	namespace: NAME,
+	distance: 200,
+	speed: 1000,
+	easing: 'linear',
+	animation: 'fade', // fade, slide, none
+	animationSpeed: 500,
 
-    // Constructor
-    var ScrollToTop = function(options) {
-        this.$doc = $('body');
-        this.options = $.extend(true, {}, ScrollToTop.defaults, options);
+	mobile: {
+		width: 768,
+		distance: 100,
+		speed: 1000,
+		easing: 'easeInOutElastic',
+		animation: 'slide',
+		animationSpeed: 200
+	},
 
-        var namespace = this.options.namespace;
+	trigger: null, // Set a custom triggering element. Can be an HTML string or jQuery object
+	target: null, // Set a custom target element for scrolling to. Can be element or number
+	text: 'Scroll To Top', // Text for element, can contain HTML
 
-        if (this.options.skin === null) {
-            this.options.skin = 'default';
-        }
+	skin: null,
+	throttle: 250
+}
 
-        this.classes = {
-            skin: namespace + '_' + this.options.skin,
-            trigger: namespace,
-            animating: namespace + '_animating',
-            show: namespace + '_show'
-        };
+class ScrollToTop {
+	constructor(options) {
+		this.$doc = $('body');
+		this.options = $.extend(true, {}, DEFAULT, options);
 
-        this.disabled = false;
-        this.useMobile = false;
-        this.isShow = false;
+		if (this.options.skin === null) {
+			this.options.skin = 'default';
+		}
 
-        var self = this;
-        $.extend(self, {
-            init: function() {
-                self.transition = self.transition();
-                self.build();
+		this.classes = {
+			skin: NAME + '_' + this.options.skin,
+			trigger: NAME,
+			animating: NAME + '_animating',
+			show: NAME + '_show'
+		};
 
-                if (self.options.target) {
-                    if (typeof self.options.target === 'number') {
-                        self.target = self.options.target;
-                    } else if (typeof self.options.target === 'string') {
-                        self.target = Math.floor($(self.options.target).offset().top);
-                    }
-                } else {
-                    self.target = 0;
-                }
+		this.disabled = false;
+		this.useMobile = false;
+		this.isShow = false;
+		this.init();
+	}
 
-                self.$trigger.on('click.scrollToTop', function() {
-                    self.$doc.trigger('ScrollToTop::jump');
-                    return false;
-                });
+	init() {
+		this.transition = this.transition();
+		this.build();
 
-                // bind events
-                self.$doc.on('ScrollToTop::jump', function() {
-                    if (self.disabled) {
-                        return;
-                    }
+		if (this.options.target) {
+			if (typeof this.options.target === 'number') {
+				this.target = this.options.target;
+			} else if (typeof this.options.target === 'string') {
+				this.target = Math.floor($(this.options.target).offset().top);
+			}
+		} else {
+			this.target = 0;
+		}
 
-                    self.checkMobile();
+		this.$trigger.on('click.scrollToTop', () => {
+			this.$doc.trigger('ScrollToTop::jump');
+			return false;
+		});
 
-                    var speed, easing;
+		// bind events
+		this.$doc.on('ScrollToTop::jump', () => {
+				if (this.disabled) {
+					return;
+				}
 
-                    if (self.useMobile) {
-                        speed = self.options.mobile.speed;
-                        easing = self.options.mobile.easing;
-                    } else {
-                        speed = self.options.speed;
-                        easing = self.options.easing;
-                    }
+				this.checkMobile();
 
-                    self.$doc.addClass(self.classes.animating);
+				let speed, easing;
 
-                    if (self.transition.supported) {
-                        var pos = $(window).scrollTop();
+				if (this.useMobile) {
+					speed = this.options.mobile.speed;
+					easing = this.options.mobile.easing;
+				} else {
+					speed = this.options.speed;
+					easing = this.options.easing;
+				}
 
-                        self.$doc.css({
-                            'margin-top': -pos + self.target + 'px'
-                        });
-                        $(window).scrollTop(self.target);
+				this.$doc.addClass(this.classes.animating);
 
-                        self.insertRule('.duration_' + speed + '{' + self.transition.prefix + 'transition-duration: ' + speed + 'ms;}');
+				if (this.transition.supported) {
+					let pos = $(window).scrollTop();
 
-                        self.$doc.addClass('easing_' + easing + ' duration_' + speed).css({
-                            'margin-top': ''
-                        }).one(self.transition.end, function() {
-                            self.$doc.removeClass(self.classes.animating + ' easing_' + easing + ' duration_' + speed);
-                        });
-                    } else {
-                        $('html, body').stop(true, false).animate({
-                            scrollTop: self.target
-                        }, speed, function() {
-                            self.$doc.removeClass(self.classes.animating);
-                        });
-                        return;
-                    }
-                })
-                    .on('ScrollToTop::show', function() {
-                        if (self.isShow) {
-                            return;
-                        }
-                        self.isShow = true;
+					this.$doc.css({
+						'margin-top': -pos + this.target + 'px'
+					});
+					$(window).scrollTop(this.target);
 
-                        self.$trigger.addClass(self.classes.show);
-                    })
-                    .on('ScrollToTop::hide', function() {
-                        if (!self.isShow) {
-                            return;
-                        }
-                        self.isShow = false;
-                        self.$trigger.removeClass(self.classes.show);
-                    })
-                    .on('ScrollToTop::disable', function() {
-                        self.disabled = true;
-                        self.$doc.trigger('ScrollToTop::hide');
-                    })
-                    .on('ScrollToTop::enable', function() {
-                        self.disabled = false;
-                        self.toggle();
-                    });
+					this.$doc.attr("style", `${this.transition.prefix}transition-duration:${speed}ms`);
 
-                $(window).on('scroll.ScrollToTop', self._throttle(function() {
-                    if (self.disabled) {
-                        return;
-                    }
+					this.$doc.addClass('easing_' + easing + ' duration_' + speed).css({
+						'margin-top': ''
+					}).one(this.transition.end, () => {
+						this.$doc.removeClass(this.classes.animating + ' easing_' + easing + ' duration_' + speed);
+					});
+				} else {
+					$('html, body').stop(true, false).animate({
+						scrollTop: this.target
+					}, speed, () => {
+						this.$doc.removeClass(this.classes.animating);
+					});
+					return;
+				}
+			})
+			.on('ScrollToTop::show', () => {
+				if (this.isShow) {
+					return;
+				}
+				this.isShow = true;
 
-                    self.toggle();
-                }, self.options.throttle));
+				this.$trigger.addClass(this.classes.show);
+			})
+			.on('ScrollToTop::hide', () => {
+				if (!this.isShow) {
+					return;
+				}
+				this.isShow = false;
+				this.$trigger.removeClass(this.classes.show);
+				this.$doc.attr("style", "");
+			})
+			.on('ScrollToTop::disable', () => {
+				this.disabled = true;
+				this.$doc.trigger('ScrollToTop::hide');
+			})
+			.on('ScrollToTop::enable', () => {
+				this.disabled = false;
+				this.toggle();
+			});
 
-                if (self.options.mobile) {
-                    $(window).on('resize.ScrollToTop orientationchange.ScrollToTop', self._throttle(function() {
-                        if (self.disabled) {
-                            return;
-                        }
+		$(window).on('scroll.ScrollToTop', this._throttle(() => {
+			if (this.disabled) {
+				return;
+			}
 
-                        self.checkMobile();
-                    }, self.options.throttle));
-                }
+			this.toggle();
+		}, this.options.throttle));
 
-                self.toggle();
-            },
-            checkMobile: function() {
-                var width = $(window).width();
+		if (this.options.mobile) {
+			$(window).on('resize.ScrollToTop orientationchange.ScrollToTop', this._throttle(() => {
+				if (this.disabled) {
+					return;
+				}
 
-                if (width < self.options.mobile.width) {
-                    self.useMobile = true;
-                } else {
-                    self.useMobile = false;
-                }
-            },
-            build: function() {
-                if (self.options.trigger) {
-                    self.$trigger = $(self.options.trigger);
-                } else {
-                    self.$trigger = $('<a href="#" class="' + self.classes.trigger + ' ' + self.classes.skin + '">' + self.options.text + '</a>').appendTo($('body'));
-                }
+				this.checkMobile();
+			}, this.options.throttle));
+		}
 
-                self.insertRule('.' + self.classes.show + '{' + self.transition.prefix + 'animation-duration: ' + self.options.animationSpeed + 'ms;' + self.transition.prefix + 'animation-name: ' + self.options.namespace + '_' + self.options.animation + ';}');
+		this.toggle();
+	}
 
-                if (self.options.mobile) {
-                    self.insertRule('@media (max-width: ' + self.options.mobile.width + 'px){.' + self.classes.show + '{' + self.transition.prefix + 'animation-duration: ' + self.options.mobile.animationSpeed + 'ms !important;' + self.transition.prefix + 'animation-name: ' + self.options.namespace + '_' + self.options.mobile.animation + '  !important;}}');
-                }
-            },
-            can: function() {
-                var distance;
-                if (self.useMobile) {
-                    distance = self.options.mobile.distance;
-                } else {
-                    distance = self.options.distance;
-                }
-                if ($(window).scrollTop() > distance) {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
-            toggle: function() {
-                if (self.can()) {
-                    self.$doc.trigger('ScrollToTop::show');
-                } else {
-                    self.$doc.trigger('ScrollToTop::hide');
-                }
-            },
-            transition: function() {
-                var e,
-                    end,
-                    prefix = '',
-                    supported = false,
-                    el = document.createElement("fakeelement"),
-                    transitions = {
-                        "WebkitTransition": "webkitTransitionEnd",
-                        "MozTransition": "transitionend",
-                        "OTransition": "oTransitionend",
-                        "transition": "transitionend"
-                    };
-                for (e in transitions) {
-                    if (el.style[e] !== undefined) {
-                        end = transitions[e];
-                        supported = true;
-                        break;
-                    }
-                }
-                if (/(WebKit)/i.test(window.navigator.userAgent)) {
-                    prefix = '-webkit-';
-                }
-                return {
-                    prefix: prefix,
-                    end: end,
-                    supported: supported
-                };
-            },
-            insertRule: function(rule) {
-                if (self.rules && self.rules[rule]) {
-                    return;
-                } else if (self.rules === undefined) {
-                    self.rules = {};
-                } else {
-                    self.rules[rule] = true;
-                }
+	build() {
+		if (this.options.trigger) {
+			this.$trigger = $(this.options.trigger);
+		} else {
+			this.$trigger = $('<a href="#" class="' + this.classes.trigger + ' ' + this.classes.skin + '">' + this.options.text + '</a>').appendTo($('body'));
+		}
 
-                if (document.styleSheets && document.styleSheets.length) {
-                    document.styleSheets[0].insertRule(rule, 0);
-                } else {
-                    var style = document.createElement('style');
-                    style.innerHTML = rule;
-                    document.head.appendChild(style);
-                }
-            },
-            /**
-             * _throttle
-             * @description Borrowed from Underscore.js
-             */
-            _throttle: function(func, wait) {
-                var _now = Date.now || function() {
-                    return new Date().getTime();
-                };
-                var context, args, result;
-                var timeout = null;
-                var previous = 0;
-                var later = function() {
-                    previous = _now();
-                    timeout = null;
-                    result = func.apply(context, args);
-                    context = args = null;
-                };
-                return function() {
-                    var now = _now();
-                    var remaining = wait - (now - previous);
-                    context = this;
-                    args = arguments;
-                    if (remaining <= 0) {
-                        clearTimeout(timeout);
-                        timeout = null;
-                        previous = now;
-                        result = func.apply(context, args);
-                        context = args = null;
-                    } else if (!timeout) {
-                        timeout = setTimeout(later, remaining);
-                    }
-                    return result;
-                };
-            }
-        });
+		this.insertRule(`.${this.classes.show} {${this.transition.prefix}animation-duration:${this.options.animationSpeed}ms; ${this.transition.prefix}animation-name:+${this.options.namespace}_${this.options.animation} ;}`);
 
-        this.init();
-    };
+		if (this.options.mobile) {
+			this.insertRule(`@media (max-width:${this.options.mobile.width}px){.${this.classes.show}{${this.transition.prefix}animation-duration: ${this.options.mobile.animationSpeed}ms!important; + ${this.transition.prefix}animation-name: ${this.options.namespace}_${this.options.mobile.animation}!important;}}`);
+		}
 
-    // Default options
-    ScrollToTop.defaults = {
-        distance: 200,
-        speed: 1000,
-        easing: 'linear',
-        animation: 'fade', // fade, slide, none
-        animationSpeed: 500,
+	}
 
-        mobile: {
-            width: 768,
-            distance: 100,
-            speed: 1000,
-            easing: 'easeInOutElastic',
-            animation: 'slide',
-            animationSpeed: 200
-        },
+	checkMobile() {
+		let width = $(window).width();
 
-        trigger: null, // Set a custom triggering element. Can be an HTML string or jQuery object
-        target: null, // Set a custom target element for scrolling to. Can be element or number
-        text: 'Scroll To Top', // Text for element, can contain HTML
+		if (width < this.options.mobile.width) {
+			this.useMobile = true;
+		} else {
+			this.useMobile = false;
+		}
+	}
 
-        skin: null,
-        throttle: 250,
+	can() {
+		let distance;
+		if (this.useMobile) {
+			distance = this.options.mobile.distance;
+		} else {
+			distance = this.options.distance;
+		}
+		if ($(window).scrollTop() > distance) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-        namespace: 'scrollToTop'
-    };
+	toggle() {
+		if (this.can()) {
+			this.$doc.trigger('ScrollToTop::show');
+		} else {
+			this.$doc.trigger('ScrollToTop::hide');
+		}
+	}
 
-    ScrollToTop.prototype = {
-        constructor: ScrollToTop,
-        jump: function() {
-            this.$doc.trigger('ScrollToTop::jump');
-        },
-        disable: function() {
-            this.$doc.trigger('ScrollToTop::disable');
-        },
-        enable: function() {
-            this.$doc.trigger('ScrollToTop::enable');
-        },
-        destroy: function() {
-            this.$trigger.remove();
-            this.$doc.data('ScrollToTop', null);
-            this.$doc.off('ScrollToTop::enable')
-                .off('ScrollToTop::disable')
-                .off('ScrollToTop::jump')
-                .off('ScrollToTop::show')
-                .off('ScrollToTop::hide');
-            $(window).off('.ScrollToTop');
-        }
-    };
+	transition() {
+		let e,
+			end,
+			prefix = '',
+			supported = false,
+			el = document.createElement("fakeelement"),
+			transitions = {
+				"WebkitTransition": "webkitTransitionEnd",
+				"MozTransition": "transitionend",
+				"OTransition": "oTransitionend",
+				"transition": "transitionend"
+			};
+		for (e in transitions) {
+			if (el.style[e] !== undefined) {
+				end = transitions[e];
+				supported = true;
+				break;
+			}
+		}
+		if (/(WebKit)/i.test(window.navigator.userAgent)) {
+			prefix = '-webkit-';
+		}
+		return {
+			prefix: prefix,
+			end: end,
+			supported: supported
+		};
+	}
 
-    $.fn.scrollToTop = function(options) {
-        if (typeof options === 'string') {
-            var method = options;
-            var method_arguments = Array.prototype.slice.call(arguments, 1);
+	insertRule(rule) {
+		if (this.rules && this.rules[rule]) {
+			return;
+		} else if (this.rules === undefined) {
+			this.rules = {};
+		} else {
+			this.rules[rule] = true;
+		}
 
-            return this.each(function() {
-                var api = $.data(this, 'scrollToTop');
+		if (document.styleSheets && document.styleSheets.length) {
+			document.styleSheets[0].insertRule(rule, 0);
+		} else {
+			let style = document.createElement('style');
+			style.innerHTML = rule;
+			document.head.appendChild(style);
+		}
+	}
 
-                if (api && typeof api[method] === 'function') {
-                    api[method].apply(api, method_arguments);
-                }
-            });
-        } else {
-            return this.each(function() {
-                var api = $.data(this, 'scrollToTop');
-                if (!api) {
-                    api = new ScrollToTop(options);
-                    $.data(this, 'scrollToTop', api);
-                }
-            });
-        }
-    };
-}(window, document, jQuery));
+	/**
+	 * _throttle
+	 * @description Borrowed from Underscore.js
+	 */
+	_throttle(func, wait) {
+		let _now = Date.now || function () {
+			return new Date().getTime();
+		};
+		let context, args, result;
+		let timeout = null;
+		let previous = 0;
+		let later = () => {
+			previous = _now();
+			timeout = null;
+			result = func.apply(context, args);
+			context = args = null;
+		};
+		return () => {
+			let now = _now();
+			let remaining = wait - (now - previous);
+			context = this;
+			args = arguments;
+			if (remaining <= 0) {
+				clearTimeout(timeout);
+				timeout = null;
+				previous = now;
+				result = func.apply(context, args);
+				context = args = null;
+			} else if (!timeout) {
+				timeout = setTimeout(later, remaining);
+			}
+			return result;
+		};
+	}
+
+	jump() {
+		this.$doc.trigger('ScrollToTop::jump');
+	}
+
+	disable() {
+		this.$doc.trigger('ScrollToTop::disable');
+	}
+
+	enable() {
+		this.$doc.trigger('ScrollToTop::enable');
+	}
+
+	destroy() {
+		this.$trigger.remove();
+		this.$doc.data(NAME, null);
+		this.$doc.off('ScrollToTop::enable')
+			.off('ScrollToTop::disable')
+			.off('ScrollToTop::jump')
+			.off('ScrollToTop::show')
+			.off('ScrollToTop::hide');
+		$(window).off('.ScrollToTop');
+	}
+
+	static _jQueryInterface(options, ...params) {
+		"use strict";
+		if (typeof options === 'string') {
+			let method = options;
+
+			return this.each(() => {
+				let api = $.data(this, NAME);
+
+				if (api && typeof api[method] === 'function') {
+					api[method].apply(api, ...params);
+				}
+			});
+		} else {
+			return this.each(() => {
+				let api = $.data(this, NAME);
+				if (!api) {
+					api = new ScrollToTop(options);
+					$.data(this, NAME, api);
+				}
+			});
+		}
+	}
+}
+
+$.fn[NAME] = ScrollToTop._jQueryInterface;
+$.fn[NAME].constructor = ScrollToTop;
+$.fn[NAME].noConflict = () => {
+	$.fn[NAME] = JQUERY_NO_CONFLICT
+	return ScrollToTop._jQueryInterface
+};
+
+export default ScrollToTop;
