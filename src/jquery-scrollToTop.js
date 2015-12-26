@@ -13,7 +13,7 @@ const DEFAULT = {
 		width: 768,
 		distance: 100,
 		speed: 1000,
-		easing: 'easeInOutElastic',
+		easing: 'spring',
 		animation: 'slide',
 		animationSpeed: 200
 	},
@@ -23,7 +23,8 @@ const DEFAULT = {
 	text: 'Scroll To Top', // Text for element, can contain HTML
 
 	skin: null,
-	throttle: 250
+	throttle: 250,
+	mobileHA: false //turn on or turn off mobile hardware acceleration
 }
 
 class ScrollToTop {
@@ -38,28 +39,32 @@ class ScrollToTop {
 		this.classes = {
 			skin: NAME + '_' + this.options.skin,
 			trigger: NAME,
-			animating: NAME + '_animating',
 			show: NAME + '_show'
 		};
 
 		this.disabled = false;
 		this.useMobile = false;
 		this.isShow = false;
+		this.$container = this.$doc;
+		this.$targetElement = this.$doc;
+		this.target = this.options.target;
+
 		this.init();
 	}
 
 	init() {
-		this.transition = this.transition();
 		this.build();
 
 		if (this.options.target) {
 			if (typeof this.options.target === 'number') {
-				this.target = this.options.target;
+				this.$container = null;
 			} else if (typeof this.options.target === 'string') {
-				this.target = Math.floor($(this.options.target).offset().top);
+				this.target =  $(this.options.target).offset().top - 20;
+				this.$container = null;
 			}
 		} else {
-			this.target = 0;
+			this.target = null;
+			this.$container = null;
 		}
 
 		this.$trigger.on('click.scrollToTop', () => {
@@ -84,32 +89,13 @@ class ScrollToTop {
 					speed = this.options.speed;
 					easing = this.options.easing;
 				}
-
-				this.$doc.addClass(this.classes.animating);
-
-				if (this.transition.supported) {
-					let pos = $(window).scrollTop();
-
-					this.$doc.css({
-						'margin-top': -pos + this.target + 'px'
-					});
-					$(window).scrollTop(this.target);
-
-					this.$doc.attr("style", `${this.transition.prefix}transition-duration:${speed}ms`);
-
-					this.$doc.addClass('easing_' + easing + ' duration_' + speed).css({
-						'margin-top': ''
-					}).one(this.transition.end, () => {
-						this.$doc.removeClass(this.classes.animating + ' easing_' + easing + ' duration_' + speed);
-					});
-				} else {
-					$('html, body').stop(true, false).animate({
-						scrollTop: this.target
-					}, speed, () => {
-						this.$doc.removeClass(this.classes.animating);
-					});
-					return;
-				}
+				this.$targetElement.velocity("scroll", {
+					offset: this.target,
+					container: this.$container,
+					duration: speed,
+					easing: easing,
+					mobileHA: this.options.mobileHA
+				});
 			})
 			.on('ScrollToTop::show', () => {
 				if (this.isShow) {
@@ -117,15 +103,45 @@ class ScrollToTop {
 				}
 				this.isShow = true;
 
-				this.$trigger.addClass(this.classes.show);
+				let _animation,_animationSpeed;
+				if (this.$doc.outerWidth() < this.options.mobile.width) {
+					_animation = this.options.mobile.animation;
+					_animationSpeed = this.options.mobile.animationSpeed;
+				} else {
+					_animation = this.options.animation;
+					_animationSpeed = this.options.animationSpeed;
+				}
+
+				if (_animation === 'fade') {
+					this.$trigger.velocity({
+						bottom: 20
+					}).velocity(`${_animation}In`, {
+						duration: _animationSpeed
+					});
+				} else if (_animation === 'slide') {
+					this.$trigger.css('opacity', '1');
+					this.$trigger.velocity({
+						bottom: 20
+					}, _animationSpeed);
+				} else {
+
+					this.$trigger.velocity({
+						bottom: 20
+					}).velocity(`fadeIn`, {
+						duration: 100
+					});
+				}
 			})
 			.on('ScrollToTop::hide', () => {
 				if (!this.isShow) {
 					return;
 				}
 				this.isShow = false;
-				this.$trigger.removeClass(this.classes.show);
-				this.$doc.attr("style", "");
+				this.$trigger.css('opacity', '0');
+				this.$trigger.velocity({
+					bottom: -100
+				});
+				// this.$doc.attr("style", "");
 			})
 			.on('ScrollToTop::disable', () => {
 				this.disabled = true;
@@ -140,7 +156,6 @@ class ScrollToTop {
 			if (this.disabled) {
 				return;
 			}
-
 			this.toggle();
 		}, this.options.throttle));
 
@@ -154,6 +169,8 @@ class ScrollToTop {
 			}, this.options.throttle));
 		}
 
+		this.$doc.addClass(this.classes.animating);
+
 		this.toggle();
 	}
 
@@ -163,13 +180,6 @@ class ScrollToTop {
 		} else {
 			this.$trigger = $('<a href="#" class="' + this.classes.trigger + ' ' + this.classes.skin + '">' + this.options.text + '</a>').appendTo($('body'));
 		}
-
-		this.insertRule(`.${this.classes.show} {${this.transition.prefix}animation-duration:${this.options.animationSpeed}ms; ${this.transition.prefix}animation-name:+${this.options.namespace}_${this.options.animation} ;}`);
-
-		if (this.options.mobile) {
-			this.insertRule(`@media (max-width:${this.options.mobile.width}px){.${this.classes.show}{${this.transition.prefix}animation-duration: ${this.options.mobile.animationSpeed}ms!important; + ${this.transition.prefix}animation-name: ${this.options.namespace}_${this.options.mobile.animation}!important;}}`);
-		}
-
 	}
 
 	checkMobile() {
@@ -200,54 +210,8 @@ class ScrollToTop {
 		if (this.can()) {
 			this.$doc.trigger('ScrollToTop::show');
 		} else {
+			console.log("run");
 			this.$doc.trigger('ScrollToTop::hide');
-		}
-	}
-
-	transition() {
-		let e,
-			end,
-			prefix = '',
-			supported = false,
-			el = document.createElement("fakeelement"),
-			transitions = {
-				"WebkitTransition": "webkitTransitionEnd",
-				"MozTransition": "transitionend",
-				"OTransition": "oTransitionend",
-				"transition": "transitionend"
-			};
-		for (e in transitions) {
-			if (el.style[e] !== undefined) {
-				end = transitions[e];
-				supported = true;
-				break;
-			}
-		}
-		if (/(WebKit)/i.test(window.navigator.userAgent)) {
-			prefix = '-webkit-';
-		}
-		return {
-			prefix: prefix,
-			end: end,
-			supported: supported
-		};
-	}
-
-	insertRule(rule) {
-		if (this.rules && this.rules[rule]) {
-			return;
-		} else if (this.rules === undefined) {
-			this.rules = {};
-		} else {
-			this.rules[rule] = true;
-		}
-
-		if (document.styleSheets && document.styleSheets.length) {
-			document.styleSheets[0].insertRule(rule, 0);
-		} else {
-			let style = document.createElement('style');
-			style.innerHTML = rule;
-			document.head.appendChild(style);
 		}
 	}
 

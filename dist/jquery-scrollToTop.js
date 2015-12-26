@@ -65,7 +65,7 @@
 			width: 768,
 			distance: 100,
 			speed: 1000,
-			easing: 'easeInOutElastic',
+			easing: 'spring',
 			animation: 'slide',
 			animationSpeed: 200
 		},
@@ -73,7 +73,8 @@
 		target: null,
 		text: 'Scroll To Top',
 		skin: null,
-		throttle: 250
+		throttle: 250,
+		mobileHA: false
 	};
 
 	var ScrollToTop = (function () {
@@ -90,12 +91,14 @@
 			this.classes = {
 				skin: NAME + '_' + this.options.skin,
 				trigger: NAME,
-				animating: NAME + '_animating',
 				show: NAME + '_show'
 			};
 			this.disabled = false;
 			this.useMobile = false;
 			this.isShow = false;
+			this.$container = this.$doc;
+			this.$targetElement = this.$doc;
+			this.target = this.options.target;
 			this.init();
 		}
 
@@ -104,17 +107,18 @@
 			value: function init() {
 				var _this = this;
 
-				this.transition = this.transition();
 				this.build();
 
 				if (this.options.target) {
 					if (typeof this.options.target === 'number') {
-						this.target = this.options.target;
+						this.$container = null;
 					} else if (typeof this.options.target === 'string') {
-						this.target = Math.floor((0, _jQuery2.default)(this.options.target).offset().top);
+						this.target = (0, _jQuery2.default)(this.options.target).offset().top - 20;
+						this.$container = null;
 					}
 				} else {
-					this.target = 0;
+					this.target = null;
+					this.$container = null;
 				}
 
 				this.$trigger.on('click.scrollToTop', function () {
@@ -140,40 +144,49 @@
 						easing = _this.options.easing;
 					}
 
-					_this.$doc.addClass(_this.classes.animating);
-
-					if (_this.transition.supported) {
-						var pos = (0, _jQuery2.default)(window).scrollTop();
-
-						_this.$doc.css({
-							'margin-top': -pos + _this.target + 'px'
-						});
-
-						(0, _jQuery2.default)(window).scrollTop(_this.target);
-
-						_this.$doc.attr("style", _this.transition.prefix + 'transition-duration:' + speed + 'ms');
-
-						_this.$doc.addClass('easing_' + easing + ' duration_' + speed).css({
-							'margin-top': ''
-						}).one(_this.transition.end, function () {
-							_this.$doc.removeClass(_this.classes.animating + ' easing_' + easing + ' duration_' + speed);
-						});
-					} else {
-						(0, _jQuery2.default)('html, body').stop(true, false).animate({
-							scrollTop: _this.target
-						}, speed, function () {
-							_this.$doc.removeClass(_this.classes.animating);
-						});
-						return;
-					}
+					_this.$targetElement.velocity("scroll", {
+						offset: _this.target,
+						container: _this.$container,
+						duration: speed,
+						easing: easing,
+						mobileHA: _this.options.mobileHA
+					});
 				}).on('ScrollToTop::show', function () {
 					if (_this.isShow) {
 						return;
 					}
 
 					_this.isShow = true;
+					var _animation = undefined,
+					    _animationSpeed = undefined;
 
-					_this.$trigger.addClass(_this.classes.show);
+					if (_this.$doc.outerWidth() < _this.options.mobile.width) {
+						_animation = _this.options.mobile.animation;
+						_animationSpeed = _this.options.mobile.animationSpeed;
+					} else {
+						_animation = _this.options.animation;
+						_animationSpeed = _this.options.animationSpeed;
+					}
+
+					if (_animation === 'fade') {
+						_this.$trigger.velocity({
+							bottom: 20
+						}).velocity(_animation + 'In', {
+							duration: _animationSpeed
+						});
+					} else if (_animation === 'slide') {
+						_this.$trigger.css('opacity', '1');
+
+						_this.$trigger.velocity({
+							bottom: 20
+						}, _animationSpeed);
+					} else {
+						_this.$trigger.velocity({
+							bottom: 20
+						}).velocity('fadeIn', {
+							duration: 100
+						});
+					}
 				}).on('ScrollToTop::hide', function () {
 					if (!_this.isShow) {
 						return;
@@ -181,9 +194,11 @@
 
 					_this.isShow = false;
 
-					_this.$trigger.removeClass(_this.classes.show);
+					_this.$trigger.css('opacity', '0');
 
-					_this.$doc.attr("style", "");
+					_this.$trigger.velocity({
+						bottom: -100
+					});
 				}).on('ScrollToTop::disable', function () {
 					_this.disabled = true;
 
@@ -211,6 +226,7 @@
 					}, this.options.throttle));
 				}
 
+				this.$doc.addClass(this.classes.animating);
 				this.toggle();
 			}
 		}, {
@@ -220,12 +236,6 @@
 					this.$trigger = (0, _jQuery2.default)(this.options.trigger);
 				} else {
 					this.$trigger = (0, _jQuery2.default)('<a href="#" class="' + this.classes.trigger + ' ' + this.classes.skin + '">' + this.options.text + '</a>').appendTo((0, _jQuery2.default)('body'));
-				}
-
-				this.insertRule('.' + this.classes.show + ' {' + this.transition.prefix + 'animation-duration:' + this.options.animationSpeed + 'ms; ' + this.transition.prefix + 'animation-name:+' + this.options.namespace + '_' + this.options.animation + ' ;}');
-
-				if (this.options.mobile) {
-					this.insertRule('@media (max-width:' + this.options.mobile.width + 'px){.' + this.classes.show + '{' + this.transition.prefix + 'animation-duration: ' + this.options.mobile.animationSpeed + 'ms!important; + ' + this.transition.prefix + 'animation-name: ' + this.options.namespace + '_' + this.options.mobile.animation + '!important;}}');
 				}
 			}
 		}, {
@@ -262,59 +272,8 @@
 				if (this.can()) {
 					this.$doc.trigger('ScrollToTop::show');
 				} else {
+					console.log("run");
 					this.$doc.trigger('ScrollToTop::hide');
-				}
-			}
-		}, {
-			key: 'transition',
-			value: function transition() {
-				var e = undefined,
-				    end = undefined,
-				    prefix = '',
-				    supported = false,
-				    el = document.createElement("fakeelement"),
-				    transitions = {
-					"WebkitTransition": "webkitTransitionEnd",
-					"MozTransition": "transitionend",
-					"OTransition": "oTransitionend",
-					"transition": "transitionend"
-				};
-
-				for (e in transitions) {
-					if (el.style[e] !== undefined) {
-						end = transitions[e];
-						supported = true;
-						break;
-					}
-				}
-
-				if (/(WebKit)/i.test(window.navigator.userAgent)) {
-					prefix = '-webkit-';
-				}
-
-				return {
-					prefix: prefix,
-					end: end,
-					supported: supported
-				};
-			}
-		}, {
-			key: 'insertRule',
-			value: function insertRule(rule) {
-				if (this.rules && this.rules[rule]) {
-					return;
-				} else if (this.rules === undefined) {
-					this.rules = {};
-				} else {
-					this.rules[rule] = true;
-				}
-
-				if (document.styleSheets && document.styleSheets.length) {
-					document.styleSheets[0].insertRule(rule, 0);
-				} else {
-					var style = document.createElement('style');
-					style.innerHTML = rule;
-					document.head.appendChild(style);
 				}
 			}
 		}, {
