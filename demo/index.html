@@ -263,9 +263,9 @@
         $(document).ready(function($) {
             $('body').scrollToTop({
                 distance: 300,
-                speed: 800,
+                speed: 500,
                 easing: 'linear',
-                animation: 'slide', // fade, slide, none
+                animation: 'fade', // fade, slide, none
                 animationSpeed: 800,
 
                 mobile: {
@@ -277,8 +277,8 @@
                     animationSpeed: 800
                 },
 
-                trigger: '.trigger-btn', // Set a custom triggering element. Can be an HTML string or jQuery object
-                target: 712, // Set a custom target element for scrolling to. Can be element or number
+                trigger: null, // Set a custom triggering element. Can be an HTML string or jQuery object
+                target: null, // Set a custom target element for scrolling to. Can be element or number
                 text: 'Scroll To Top', // Text for element, can contain HTML
 
                 skin: 'cycle',

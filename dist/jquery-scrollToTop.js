@@ -74,7 +74,7 @@
 		text: 'Scroll To Top',
 		skin: null,
 		throttle: 250,
-		mobileHA: false
+		mobileHA: true
 	};
 
 	var ScrollToTop = (function () {
@@ -105,8 +105,6 @@
 		_createClass(ScrollToTop, [{
 			key: 'init',
 			value: function init() {
-				var _this = this;
-
 				this.build();
 
 				if (this.options.target) {
@@ -121,6 +119,23 @@
 					this.$container = null;
 				}
 
+				this.bindEvents();
+				this.toggle();
+			}
+		}, {
+			key: 'build',
+			value: function build() {
+				if (this.options.trigger) {
+					this.$trigger = (0, _jQuery2.default)(this.options.trigger);
+				} else {
+					this.$trigger = (0, _jQuery2.default)('<a href="#" class="' + this.classes.trigger + ' ' + this.classes.skin + '">' + this.options.text + '</a>').appendTo((0, _jQuery2.default)('body'));
+				}
+			}
+		}, {
+			key: 'bindEvents',
+			value: function bindEvents() {
+				var _this = this;
+
 				this.$trigger.on('click.scrollToTop', function () {
 					_this.$doc.trigger('ScrollToTop::jump');
 
@@ -133,60 +148,15 @@
 
 					_this.checkMobile();
 
-					var speed = undefined,
-					    easing = undefined;
-
-					if (_this.useMobile) {
-						speed = _this.options.mobile.speed;
-						easing = _this.options.mobile.easing;
-					} else {
-						speed = _this.options.speed;
-						easing = _this.options.easing;
-					}
-
-					_this.$targetElement.velocity("scroll", {
-						offset: _this.target,
-						container: _this.$container,
-						duration: speed,
-						easing: easing,
-						mobileHA: _this.options.mobileHA
-					});
+					_this.jumpAction();
 				}).on('ScrollToTop::show', function () {
 					if (_this.isShow) {
 						return;
 					}
 
 					_this.isShow = true;
-					var _animation = undefined,
-					    _animationSpeed = undefined;
 
-					if (_this.$doc.outerWidth() < _this.options.mobile.width) {
-						_animation = _this.options.mobile.animation;
-						_animationSpeed = _this.options.mobile.animationSpeed;
-					} else {
-						_animation = _this.options.animation;
-						_animationSpeed = _this.options.animationSpeed;
-					}
-
-					if (_animation === 'fade') {
-						_this.$trigger.velocity({
-							bottom: 20
-						}).velocity(_animation + 'In', {
-							duration: _animationSpeed
-						});
-					} else if (_animation === 'slide') {
-						_this.$trigger.css('opacity', '1');
-
-						_this.$trigger.velocity({
-							bottom: 20
-						}, _animationSpeed);
-					} else {
-						_this.$trigger.velocity({
-							bottom: 20
-						}).velocity('fadeIn', {
-							duration: 100
-						});
-					}
+					_this.showAction();
 				}).on('ScrollToTop::hide', function () {
 					if (!_this.isShow) {
 						return;
@@ -194,11 +164,7 @@
 
 					_this.isShow = false;
 
-					_this.$trigger.css('opacity', '0');
-
-					_this.$trigger.velocity({
-						bottom: -100
-					});
+					_this.hideAction();
 				}).on('ScrollToTop::disable', function () {
 					_this.disabled = true;
 
@@ -224,18 +190,6 @@
 
 						_this.checkMobile();
 					}, this.options.throttle));
-				}
-
-				this.$doc.addClass(this.classes.animating);
-				this.toggle();
-			}
-		}, {
-			key: 'build',
-			value: function build() {
-				if (this.options.trigger) {
-					this.$trigger = (0, _jQuery2.default)(this.options.trigger);
-				} else {
-					this.$trigger = (0, _jQuery2.default)('<a href="#" class="' + this.classes.trigger + ' ' + this.classes.skin + '">' + this.options.text + '</a>').appendTo((0, _jQuery2.default)('body'));
 				}
 			}
 		}, {
@@ -272,7 +226,6 @@
 				if (this.can()) {
 					this.$doc.trigger('ScrollToTop::show');
 				} else {
-					console.log("run");
 					this.$doc.trigger('ScrollToTop::hide');
 				}
 			}
@@ -341,6 +294,63 @@
 				this.$doc.data(NAME, null);
 				this.$doc.off('ScrollToTop::enable').off('ScrollToTop::disable').off('ScrollToTop::jump').off('ScrollToTop::show').off('ScrollToTop::hide');
 				(0, _jQuery2.default)(window).off('.ScrollToTop');
+			}
+		}, {
+			key: 'jumpAction',
+			value: function jumpAction() {
+				var speed = this.options.speed,
+				    easing = this.options.easing;
+
+				if (this.useMobile) {
+					speed = this.options.mobile.speed;
+					easing = this.options.mobile.easing;
+				}
+
+				this.$targetElement.velocity("scroll", {
+					offset: this.target,
+					container: this.$container,
+					duration: speed,
+					easing: easing,
+					mobileHA: this.options.mobileHA
+				});
+			}
+		}, {
+			key: 'showAction',
+			value: function showAction() {
+				var _animation = this.options.animation,
+				    _animationSpeed = this.options.animationSpeed;
+
+				if (this.useMobile) {
+					_animation = this.options.mobile.animation;
+					_animationSpeed = this.options.mobile.animationSpeed;
+				}
+
+				if (_animation === 'fade') {
+					this.$trigger.velocity({
+						bottom: 20
+					}).velocity('fadeIn', {
+						duration: _animationSpeed
+					});
+				} else if (_animation === 'slide') {
+					this.$trigger.css('opacity', '1');
+					this.$trigger.velocity({
+						bottom: 20
+					}, _animationSpeed);
+				} else {
+					this.$trigger.velocity({
+						bottom: 20
+					}).velocity('fadeIn', {
+						duration: 100
+					});
+				}
+			}
+		}, {
+			key: 'hideAction',
+			value: function hideAction() {
+				this.$trigger.css('opacity', '0');
+				this.$trigger.velocity({
+					bottom: -100
+				});
 			}
 		}], [{
 			key: '_jQueryInterface',
