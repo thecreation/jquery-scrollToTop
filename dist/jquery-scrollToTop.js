@@ -56,6 +56,7 @@
 	var NAME = "scrollToTop";
 	var DEFAULT = {
 		namespace: NAME,
+		packageContainer: 'body',
 		distance: 200,
 		speed: 1000,
 		easing: 'linear',
@@ -81,22 +82,23 @@
 		function ScrollToTop(options) {
 			_classCallCheck(this, ScrollToTop);
 
-			this.$doc = (0, _jQuery2.default)('body');
 			this.options = _jQuery2.default.extend(true, {}, DEFAULT, options);
+			this.$doc = (0, _jQuery2.default)(this.options.packageContainer);
+			var namespace = this.options.namespace;
 
 			if (this.options.skin === null) {
 				this.options.skin = 'default';
 			}
 
 			this.classes = {
-				skin: NAME + '_' + this.options.skin,
-				trigger: NAME,
-				show: NAME + '_show'
+				skin: namespace + '_' + this.options.skin,
+				trigger: namespace,
+				show: namespace + '_show'
 			};
 			this.disabled = false;
 			this.useMobile = false;
 			this.isShow = false;
-			this.$container = this.$doc;
+			this.$container = null;
 			this.$targetElement = this.$doc;
 			this.target = this.options.target;
 			this.init();
@@ -108,15 +110,24 @@
 				this.build();
 
 				if (this.options.target) {
-					if (typeof this.options.target === 'number') {
-						this.$container = null;
-					} else if (typeof this.options.target === 'string') {
-						this.target = (0, _jQuery2.default)(this.options.target).offset().top - 20;
-						this.$container = null;
+					if (typeof this.options.target === 'string') {
+						this.$targetElement = (0, _jQuery2.default)(this.options.target);
+						this.target = null;
 					}
 				} else {
 					this.target = null;
-					this.$container = null;
+				}
+
+				if (this.options.packageContainer !== 'body') {
+					this.$packageContainer = this.$doc;
+					this.$container = this.$packageContainer;
+
+					if (!this.options.target) {
+						this.$targetElement = this.$doc.children().first();
+						this.$container = this.$doc;
+					}
+				} else {
+					this.$packageContainer = (0, _jQuery2.default)(window);
 				}
 
 				this.bindEvents();
@@ -128,7 +139,7 @@
 				if (this.options.trigger) {
 					this.$trigger = (0, _jQuery2.default)(this.options.trigger);
 				} else {
-					this.$trigger = (0, _jQuery2.default)('<a href="#" class="' + this.classes.trigger + ' ' + this.classes.skin + '">' + this.options.text + '</a>').appendTo((0, _jQuery2.default)('body'));
+					this.$trigger = (0, _jQuery2.default)('<a href="#" class="' + this.classes.trigger + ' ' + this.classes.skin + '">' + this.options.text + '</a>').appendTo((0, _jQuery2.default)(this.options.packageContainer));
 				}
 			}
 		}, {
@@ -174,7 +185,7 @@
 
 					_this.toggle();
 				});
-				(0, _jQuery2.default)(window).on('scroll.ScrollToTop', this._throttle(function () {
+				this.$packageContainer.on('scroll.ScrollToTop', this._throttle(function () {
 					if (_this.disabled) {
 						return;
 					}
@@ -183,7 +194,7 @@
 				}, this.options.throttle));
 
 				if (this.options.mobile) {
-					(0, _jQuery2.default)(window).on('resize.ScrollToTop orientationchange.ScrollToTop', this._throttle(function () {
+					this.$packageContainer.on('resize.ScrollToTop orientationchange.ScrollToTop', this._throttle(function () {
 						if (_this.disabled) {
 							return;
 						}
@@ -214,7 +225,7 @@
 					distance = this.options.distance;
 				}
 
-				if ((0, _jQuery2.default)(window).scrollTop() > distance) {
+				if (this.$packageContainer.scrollTop() > distance) {
 					return true;
 				} else {
 					return false;

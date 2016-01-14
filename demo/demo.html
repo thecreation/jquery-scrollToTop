@@ -17,9 +17,11 @@
         <link rel="stylesheet" href="../css/scrollToTop.css">
         <link rel="stylesheet" href="../css/easing.css">
         <style type="text/css">
-        .container {
-            width: 980px;
+        #container {
             margin: auto;
+            height: 500px;
+            overflow: auto;
+            position: relative;
         }
         
         .trigger-btn {
@@ -40,25 +42,25 @@
             content: "";
             width: 0px;
             height: 0px;
-            border-right:10px solid transparent;
-            border-left:10px solid transparent;
-            border-top:10px solid transparent;
-            border-bottom:10px solid snow;
+            border-right: 10px solid transparent;
+            border-left: 10px solid transparent;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid snow;
             display: block;
             position: absolute;
             left: 50%;
             top: 50%;
-            -webkit-transform: translate(-50%,-75%);
-            -ms-transform: translate(-50%,-75%);
-            -o-transform: translate(-50%,-75%);
-            transform: translate(-50%,-75%);
+            -webkit-transform: translate(-50%, -75%);
+            -ms-transform: translate(-50%, -75%);
+            -o-transform: translate(-50%, -75%);
+            transform: translate(-50%, -75%);
         }
         </style>
     </head>
 
     <body>
-        <div class="container">
-            <div>
+        <div id="container">
+            <div style="margin-top: 100px">
                 <h3>Css3/html5</h3>
                 <p>Built-on CSS3 and HTML5 semantics to allow you to start captializing on a next generation standard.</p>
             </div>
@@ -261,29 +263,10 @@
         <script src="../dist/jquery-scrollToTop.js"></script>
         <script type="text/javascript">
         $(document).ready(function($) {
-            $('body').scrollToTop({
-                package:'body',
-                distance: 300,
-                speed: 500,
-                easing: 'linear',
-                animation: 'fade', // fade, slide, none
-                animationSpeed: 800,
-
-                mobile: {
-                    width: 500,
-                    distance: 500,
-                    speed: 800,
-                    easing: 'spring',
-                    animation: 'slide',
-                    animationSpeed: 800
-                },
-
-                trigger: ".trigger-btn", // Set a custom triggering element. Can be an HTML string or jQuery object
-                target: null, // Set a custom target element for scrolling to. Can be element or number
-                text: 'Scroll To Top', // Text for element, can contain HTML
-
-                skin: 'cycle',
-                throttle: 250
+            $('#container').scrollToTop({
+                packageContainer:"#container",
+                    trigger:".trigger-btn",
+                    target:null
             });
         });
         </script>
