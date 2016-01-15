@@ -291,7 +291,7 @@ class ScrollToTop {
 		if (typeof options === 'string') {
 			let method = options;
 
-			return this.each(() => {
+			return this.each(function(){
 				let api = $.data(this, NAME);
 
 				if (api && typeof api[method] === 'function') {
@@ -299,7 +299,7 @@ class ScrollToTop {
 				}
 			});
 		} else {
-			return this.each(() => {
+			return this.each(function() {
 				let api = $.data(this, NAME);
 				if (!api) {
 					api = new ScrollToTop(options);

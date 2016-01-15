@@ -17,41 +17,7 @@
 		value: true
 	});
 
-	var _jQuery2 = _interopRequireDefault(_jQuery);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _typeof(obj) {
-		return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _createClass = (function () {
-		function defineProperties(target, props) {
-			for (var i = 0; i < props.length; i++) {
-				var descriptor = props[i];
-				descriptor.enumerable = descriptor.enumerable || false;
-				descriptor.configurable = true;
-				if ("value" in descriptor) descriptor.writable = true;
-				Object.defineProperty(target, descriptor.key, descriptor);
-			}
-		}
-
-		return function (Constructor, protoProps, staticProps) {
-			if (protoProps) defineProperties(Constructor.prototype, protoProps);
-			if (staticProps) defineProperties(Constructor, staticProps);
-			return Constructor;
-		};
-	})();
+	var _jQuery2 = babelHelpers.interopRequireDefault(_jQuery);
 
 	var NAME = "scrollToTop";
 	var DEFAULT = {
@@ -80,8 +46,7 @@
 
 	var ScrollToTop = (function () {
 		function ScrollToTop(options) {
-			_classCallCheck(this, ScrollToTop);
-
+			babelHelpers.classCallCheck(this, ScrollToTop);
 			this.options = _jQuery2.default.extend(true, {}, DEFAULT, options);
 			this.$doc = (0, _jQuery2.default)(this.options.packageContainer);
 			var namespace = this.options.namespace;
@@ -104,7 +69,7 @@
 			this.init();
 		}
 
-		_createClass(ScrollToTop, [{
+		babelHelpers.createClass(ScrollToTop, [{
 			key: 'init',
 			value: function init() {
 				this.build();
@@ -379,7 +344,7 @@
 						var method = options;
 						return {
 							v: _this3.each(function () {
-								var api = _jQuery2.default.data(_this3, NAME);
+								var api = _jQuery2.default.data(this, NAME);
 
 								if (api && typeof api[method] === 'function') {
 									var _api$method;
@@ -390,21 +355,20 @@
 						};
 					})();
 
-					if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+					if ((typeof _ret === 'undefined' ? 'undefined' : babelHelpers.typeof(_ret)) === "object") return _ret.v;
 				} else {
 					return this.each(function () {
-						var api = _jQuery2.default.data(_this3, NAME);
+						var api = _jQuery2.default.data(this, NAME);
 
 						if (!api) {
 							api = new ScrollToTop(options);
 
-							_jQuery2.default.data(_this3, NAME, api);
+							_jQuery2.default.data(this, NAME, api);
 						}
 					});
 				}
 			}
 		}]);
-
 		return ScrollToTop;
 	})();
 
