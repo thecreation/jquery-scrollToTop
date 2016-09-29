@@ -1,16 +1,34 @@
 {
   "name": "jquery-scrollToTop",
-  "version": "0.3.1",
+  "version": "0.4.0",
+  "description": "A jquery plugin that automatically add a button to scroll to top.",
   "main": "dist/jquery-scrollToTop.js",
+  "copyright": "amazingSurge",
+  "license": "LGPL-3.0",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
+    "demo",
+    "gulp",
+    "CONTRIBUTING.md",
+    "manifest.json",
+    "karma.conf.js",
+    "config.js",
+    "package.json",
+    "gulpfile.babel.js",
     "tests"
   ],
+  "homepage": "https://github.com/amazingSurge/jquery-scrollToTop",
+  "authors": [
+    "amazingSurge <amazingSurge@gmail.com>"
+  ],
+  "moduleType": [
+    "globals"
+  ],
   "dependencies": {
-    "jquery": ">=1.11.0",
+    "jquery": ">=2.2.0",
     "easing": "git@github.com:amazingSurge/easing.css.git"
   }
 }

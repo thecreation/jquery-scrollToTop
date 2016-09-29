@@ -1,0 +1,8 @@
+/**
+* jQuery scrollToTop v0.4.0
+* https://github.com/amazingSurge/jquery-scrollToTop
+*
+* Copyright (c) amazingSurge
+* Released under the LGPL-3.0 license
+*/
+html{overflow-y:scroll}.scrollToTop{position:fixed;right:20px;bottom:-100px;overflow:hidden;outline:none;opacity:0}.scrollToTop_show{bottom:20px;opacity:1}.scrollToTop_animating,.scrollToTop_animating *{pointer-events:none!important}@-webkit-keyframes scrollToTop_fade{0%{opacity:0}to{opacity:1}}@keyframes scrollToTop_fade{0%{opacity:0}to{opacity:1}}@-webkit-keyframes scrollToTop_slide{0%{bottom:-100px}to{bottom:20px}}@keyframes scrollToTop_slide{0%{bottom:-100px}to{bottom:20px}}.scrollToTop{width:50px;height:50px;font-family:sans-serif;font-size:12px;color:#000;text-decoration:none;text-indent:100%;text-transform:uppercase;white-space:nowrap;background:no-repeat 50% transparent;outline:none}.scrollToTop_default{display:block;width:auto;height:auto;padding:10px;text-indent:0;background:#eee;border-radius:10px}.scrollToTop_default :hover{background-color:#ddd}.scrollToTop_cycle{background-image:url(../images/cycle.png)}.scrollToTop_cycle:hover{background-image:url(../images/cycle-hover.png)}.scrollToTop_square{background-image:url(../images/square.png)}.scrollToTop_square:hover{background-image:url(../images/square-hover.png)}.scrollToTop_text{background-image:url(../images/text.png)}.scrollToTop_text:hover{background-image:url(../images/text-hover.png)}.scrollToTop_triangle{background-image:url(../images/triangle.png)}.scrollToTop_triangle:hover{background-image:url(../images/triangle-hover.png)}
