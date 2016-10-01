@@ -1,110 +1,7 @@
-/**
-* jQuery scrollToTop v0.4.1
-* https://github.com/amazingSurge/jquery-scrollToTop
-*
-* Copyright (c) amazingSurge
-* Released under the LGPL-3.0 license
-*/
 import $ from 'jquery';
+import DEFAULTS from './defaults';
+import * as util from './util';
 
-var DEFAULTS = {
-  distance: 200,
-  speed: 1000,
-  easing: 'linear',
-  animation: 'fade', // fade, slide, none
-  animationSpeed: 500,
-
-  mobile: {
-    width: 768,
-    distance: 100,
-    speed: 1000,
-    easing: 'easeInOutElastic',
-    animation: 'slide',
-    animationSpeed: 200
-  },
-
-  trigger: null, // Set a custom triggering element. Can be an HTML string or jQuery object
-  target: null, // Set a custom target element for scrolling to. Can be element or number
-  text: 'Scroll To Top', // Text for element, can contain HTML
-
-  skin: null,
-  throttle: 250,
-
-  namespace: 'scrollToTop'
-};
-
-function transition() {
-  let e;
-  let end;
-  let prefix = '';
-  let supported = false;
-  const el = document.createElement("fakeelement");
-
-  const transitions = {
-    "WebkitTransition": "webkitTransitionEnd",
-    "MozTransition": "transitionend",
-    "OTransition": "oTransitionend",
-    "transition": "transitionend"
-  };
-
-  for (e in transitions) {
-    if (el.style[e] !== undefined) {
-      end = transitions[e];
-      supported = true;
-      break;
-    }
-  }
-  if (/(WebKit)/i.test(window.navigator.userAgent)) {
-    prefix = '-webkit-';
-  }
-  return {
-    prefix,
-    end,
-    supported
-  };
-}
-
-function throttle(func, wait) {
-  const _now = Date.now || function() {
-    return new Date().getTime();
-  };
-
-  let timeout;
-  let context;
-  let args;
-  let result;
-  let previous = 0;
-  let later = function() {
-    previous = _now();
-    timeout = null;
-    result = func.apply(context, args);
-    if (!timeout) {
-      context = args = null;
-    }
-  };
-
-  return (...params) => {
-    /*eslint consistent-this: "off"*/
-    let now = _now();
-    let remaining = wait - (now - previous);
-    context = this;
-    args = params;
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-      previous = now;
-      result = func.apply(context, args);
-      if (!timeout) {
-        context = args = null;
-      }
-    } else if (!timeout) {
-      timeout = setTimeout(later, remaining);
-    }
-    return result;
-  };
-}
 
 /**
  * Plugin constructor
@@ -135,7 +32,7 @@ class ScrollToTop {
   }
 
   _init() {
-    this.transition = transition();
+    this.transition = util.transition();
     this._build();
 
     if (this.options.target) {
@@ -228,7 +125,7 @@ class ScrollToTop {
         this._toggle();
       });
 
-    $(window).on('scroll.ScrollToTop', throttle(() => {
+    $(window).on('scroll.ScrollToTop', util.throttle(() => {
       if (this.disabled) {
         return;
       }
@@ -237,7 +134,7 @@ class ScrollToTop {
     }, this.options.throttle));
 
     if (this.options.mobile) {
-      $(window).on('resize.ScrollToTop orientationchange.ScrollToTop', throttle(() => {
+      $(window).on('resize.ScrollToTop orientationchange.ScrollToTop', util.throttle(() => {
         if (this.disabled) {
           return;
         }
@@ -338,47 +235,4 @@ class ScrollToTop {
   }
 }
 
-var info = {
-  version:'0.4.1'
-};
-
-const NAMESPACE = 'scrollToTop';
-const OtherScrollToTop = $.fn.scrollToTop;
-
-const jQueryScrollToTop = function(options, ...args) {
-  if (typeof options === 'string') {
-    const method = options;
-
-    if (/^_/.test(method)) {
-      return false;
-    } else if ((/^(get)/.test(method))) {
-      const instance = this.first().data(NAMESPACE);
-      if (instance && typeof instance[method] === 'function') {
-        return instance[method](...args);
-      }
-    } else {
-      return this.each(function() {
-        const instance = $.data(this, NAMESPACE);
-        if (instance && typeof instance[method] === 'function') {
-          instance[method](...args);
-        }
-      });
-    }
-  }
-
-  return this.each(function() {
-    if (!$(this).data(NAMESPACE)) {
-      $(this).data(NAMESPACE, new ScrollToTop(options));
-    }
-  });
-};
-
-$.fn.scrollToTop = jQueryScrollToTop;
-
-$.scrollToTop = $.extend({
-  setDefaults: ScrollToTop.setDefaults,
-  noConflict: function() {
-    $.fn.scrollToTop = OtherScrollToTop;
-    return jQueryScrollToTop;
-  }
-}, info);
+export default ScrollToTop;

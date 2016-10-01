@@ -1,5 +1,5 @@
 /**
-* jQuery scrollToTop v0.4.0
+* jQuery scrollToTop v0.4.1
 * https://github.com/amazingSurge/jquery-scrollToTop
 *
 * Copyright (c) amazingSurge
@@ -191,7 +191,9 @@
      **/
 
     var ScrollToTop = function() {
-      function ScrollToTop(options) {
+      function ScrollToTop() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
         _classCallCheck(this, ScrollToTop);
 
         this.$doc = (0, _jquery2.default)('body');
@@ -413,8 +415,8 @@
           return false;
         }
       }, {
-        key: 'toggle',
-        value: function toggle() {
+        key: '_toggle',
+        value: function _toggle() {
           if (this.can()) {
             this.$doc.trigger('ScrollToTop::show');
           } else {
@@ -467,7 +469,7 @@
       }], [{
         key: 'setDefaults',
         value: function setDefaults(options) {
-          _jquery2.default.extend(DEFAULTS, _jquery2.default.isPlainObject(options) && options);
+          _jquery2.default.extend(true, DEFAULTS, _jquery2.default.isPlainObject(options) && options);
         }
       }]);
 
@@ -475,7 +477,7 @@
     }();
 
     var info = {
-      version: '0.4.0'
+      version: '0.4.1'
     };
 
     var NAMESPACE = 'scrollToTop';
