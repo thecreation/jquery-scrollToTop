@@ -46,6 +46,11 @@ bower install jquery-scrollToTop --save
 npm install jquery-scrollToTop --save
 ```
 
+#### Install From Yarn
+```sh
+yarn add jquery-scrollToTop
+```
+
 #### Build From Source
 If you want build from source:
 
@@ -123,11 +128,11 @@ You can also save the instances to variable for further use.
 
 ```javascript
 // call directly
-$().scrollToTop('destory');
+$().scrollToTop('destroy');
 
 // or
 var api = $().data('scrollToTop');
-api.destory();
+api.destroy();
 ```
 
 #### jump()

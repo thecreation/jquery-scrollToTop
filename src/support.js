@@ -9,8 +9,6 @@ let support = {};
   /**
    * Borrowed from Owl carousel
    **/
-   'use strict';
-
   let events = {
       transition: {
         end: {

@@ -1,5 +1,5 @@
 /**
-* jQuery scrollToTop v0.4.1
+* jQuery scrollToTop v0.4.2
 * https://github.com/amazingSurge/jquery-scrollToTop
 *
 * Copyright (c) amazingSurge
@@ -477,7 +477,7 @@
     }();
 
     var info = {
-      version: '0.4.1'
+      version: '0.4.2'
     };
 
     var NAMESPACE = 'scrollToTop';

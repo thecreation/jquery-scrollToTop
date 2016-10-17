@@ -2,7 +2,7 @@
   "name": "jquery-scrollToTop",
   "title": "jQuery scrollToTop",
   "description": "A jquery plugin that automatically add a button to scroll to top.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "homepage": "https://github.com/amazingSurge/jquery-scrollToTop",
   "author": {
     "name": "amazingSurge",
